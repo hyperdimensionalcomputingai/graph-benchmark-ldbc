@@ -184,7 +184,3 @@ Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean,
 
 FalkorDB's Q30 shows as `timeout` because it exceeds the 10-second limit. Without the limit it averaged 75.2 s on an AMD Ryzen 9 6900HS: the planner pairs every person's comments with all of their posts (about 447M candidate pairs) before checking `replyOfPost`. See the [FalkorDB README](falkordb/README.md#results).
 
-CLI outputs: [Neo4j 2026.09.0](results/neo4j-2026.09.0.txt), [Kuzu 0.11.3](results/kuzu-0.11.3.txt), [Ladybug 0.21.2](results/ladybug-0.21.2.txt), [lance-graph 0.5.4](results/lance-graph-0.5.4.txt), [DuckPGQ](results/duckpgq-1.5.6.txt), [FalkorDB 6.0.2](results/falkordb-6.0.2.txt).
-
-Previous results are in [`results/archived/`](results/archived/): Neo4j 2025.12.1, Kuzu 0.11.3 and lance-graph 0.5.4 from 2026-09-03, Ladybug 0.21.1, 0.21.0, 0.20.4 and 0.20.2, and FalkorDB 6.0.2 measured on an AMD Ryzen 9 6900HS on 2026-10-10.
-
