@@ -14,6 +14,7 @@ The following systems are compared:
 - Kuzu (now archived)
 - Ladybug
 - lance-graph
+- DuckPGQ (DuckDB with the SQL/PGQ community extension)
 
 ## Setup
 
@@ -98,17 +99,25 @@ each of the 30 queries run in the benchmark.
 
 ## High-level results
 
-Latest Ladybug measurements: **2026-09-30** (other engines: **2026-09-03**), on an Apple M5 with 10 logical CPUs and 24 GiB RAM, running macOS 26.6.2 and Python 3.13.14. Each engine has a completed 30-query suite, with all assertions passing and at least five measured rounds per query.
+All five engines were measured on **2026-10-16** on the same machine, back to back:
 
-Ladybug is pinned to **0.21.1**. All 30 queries use plain `conn.execute(query)`. `ANALYZE`, result cleanup and the six ART secondary indexes remain enabled. The Ladybug suite passed all 30 result assertions.
+| | |
+| --- | --- |
+| Machine | Apple M5 MacBook Pro (`Mac17,2`), 10 CPU cores (4 performance + 6 efficiency), 24 GiB unified memory |
+| OS | macOS 26.6.2 (25G83) |
+| Python | 3.13.14, pytest 9.0.2, pytest-benchmark 5.2.3 |
+| Embedded engines | Run natively in-process, with no container VM running |
+| Neo4j | Docker Desktop (engine 29.8.1), native arm64 Linux VM with 10 CPUs and 19.3 GiB RAM, using the heap/page-cache settings in `neo4j/docker-compose.yml` |
 
-Kuzu, Lance Graph and Neo4j values are from the earlier full-suite runs on the same machine; their query, benchmark and ingestion sources are unchanged on main. Neo4j ran in a native-arm64 Colima VM with 4 CPUs and 10 GiB RAM, using the existing heap/page-cache settings. Embedded engines ran natively with the VM stopped. These compare the stated deployment configurations, not equal resource limits or controlled cold caches.
+Engine versions:
 
-[Ladybug 0.21.1 CLI output](results/ladybug-0.21.1.txt) · [Raw benchmark JSON](results/ladybug-0.21.1.json)
+- **Neo4j 2026.09.0** Community Edition (previously 2025.12.1)
+- **Kuzu 0.11.3** (unchanged)
+- **Ladybug 0.21.2** (previously 0.21.1). All 30 queries use plain `conn.execute(query)`; `ANALYZE`, result cleanup and the six ART secondary indexes remain enabled
+- **lance-graph 0.5.4** (unchanged)
+- **DuckPGQ** on DuckDB 1.5.6 (extension build `61f5d082`), new in this run, with the six ART indexes that mirror Ladybug's
 
-Against the [0.21.0 run from 2026-09-29](results/archived/ladybug-0.21.0.json), Ladybug 0.21.1 has lower mean latency on 17 of 30 queries and higher latency on 13. Q30 fell from 480.406 to 88.728 ms, reversing its 0.21.0 regression; Q12 fell from 31.603 to 7.708 ms and Q16 from 6.312 to 0.975 ms. A [focused repeat](results/ladybug-0.21.1-focused.txt) confirmed these large gains. Q10 (1.570 → 1.614 ms) and Q13 (5.640 → 5.559 ms) stayed close to their 0.21.0 means, while Q27 rose from 3.061 to 3.492 ms. Relative to the earlier 0.20.4 run, 0.21.1 has lower mean latency on 22 of 30 queries, including Q10, Q13, Q27 and Q30. These are separate runs on the same machine, so the differences describe this setup and do not isolate the effect of any one upstream optimization.
-
-Against the previously recorded runs of this **30-query suite**, Ladybug 0.21.1 has a lower mean on 23 queries than Kuzu and on 26 queries than Neo4j. It has the lowest mean of these three engines on 19 queries, and no query is slower than both. The geometric mean of the per-query comparator/Ladybug latency ratios is 1.59× for Kuzu and 2.02× for Neo4j. These are comparisons of the recorded configurations and run dates, not equal-resource or same-day measurements.
+Every graph was rebuilt from the CSVs before timing and verified to contain 3,181,724 nodes and 17,256,038 relationships. Every engine passed all 30 result assertions, with at least five measured rounds per query. These runs compare the stated deployment configurations: Neo4j runs as a server inside a VM, while the others run embedded. The resource limits are not equal and caches are not controlled cold.
 
 ### Benchmark settings
 
@@ -127,45 +136,47 @@ uv run --frozen pytest benchmark_query.py \
   --benchmark-sort=fullname
 ```
 
-The runs use pytest-benchmark 5.2.3. Five rounds is a minimum, not an exact count. Query result conversion and printing remain inside the timed functions; calibration is enabled and warmup is disabled. All four graphs were verified to contain 3,181,724 nodes and 17,256,038 relationships, with expected indexes ready before timing.
+Five rounds is a minimum, not an exact count. Query result conversion and printing stay inside the timed functions. Calibration is enabled and warmup is disabled.
 
 ### Mean query latency
 
-Times are in milliseconds. Parenthesized ratios are Neo4j mean / engine mean; values above 1 indicate faster execution than this Neo4j setup.
+Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean, so a value above 1 means the engine was faster than this Neo4j setup.
 
-| Query | neo4j-2025.12.1 (ms) | kuzu-0.11.3 (ms) | ladybug-0.21.1 (ms) | lance-graph-0.5.4 (ms) |
-| --- | ---: | ---: | ---: | ---: |
-| q1 | 4.098 | 1.716 (2.39x) | 1.171 (3.50x) | 1.281 (3.20x) |
-| q2 | 5.082 | 1.313 (3.87x) | 1.179 (4.31x) | 2.266 (2.24x) |
-| q3 | 2.018 | 1.023 (1.97x) | 0.748 (2.70x) | 1.840 (1.10x) |
-| q4 | 3.141 | 0.855 (3.67x) | 0.382 (8.22x) | 2.912 (1.08x) |
-| q5 | 4.244 | 3.419 (1.24x) | 3.879 (1.09x) | 1.986 (2.14x) |
-| q6 | 3.145 | 0.705 (4.46x) | 0.715 (4.40x) | 0.706 (4.46x) |
-| q7 | 1.508 | 27.588 (0.05x) | 23.600 (0.06x) | 15.430 (0.10x) |
-| q8 | 11.720 | 2.651 (4.42x) | 3.412 (3.44x) | 1.139 (10.29x) |
-| q9 | 1.782 | 1.712 (1.04x) | 1.281 (1.39x) | 1.878 (0.95x) |
-| q10 | 3.514 | 1.511 (2.33x) | 1.614 (2.18x) | 27.044 (0.13x) |
-| q11 | 10.935 | 7.735 (1.41x) | 4.014 (2.72x) | 3.043 (3.59x) |
-| q12 | 3.888 | 17.120 (0.23x) | 7.708 (0.50x) | 18.705 (0.21x) |
-| q13 | 8.398 | 42.157 (0.20x) | 5.559 (1.51x) | 9.465 (0.89x) |
-| q14 | 1.288 | 1.464 (0.88x) | 0.883 (1.46x) | 2.432 (0.53x) |
-| q15 | 2.603 | 2.299 (1.13x) | 1.130 (2.30x) | 2.114 (1.23x) |
-| q16 | 1.418 | 1.735 (0.82x) | 0.975 (1.45x) | 3.910 (0.36x) |
-| q17 | 3.119 | 2.553 (1.22x) | 1.681 (1.86x) | 2.220 (1.41x) |
-| q18 | 2.739 | 1.441 (1.90x) | 1.183 (2.31x) | 1.741 (1.57x) |
-| q19 | 5.189 | 13.232 (0.39x) | 3.169 (1.64x) | 19.478 (0.27x) |
-| q20 | 393.291 | 13.666 (28.78x) | 14.118 (27.86x) | 2.828 (139.05x) |
-| q21 | 1.336 | 0.445 (3.00x) | 0.494 (2.70x) | 1.456 (0.92x) |
-| q22 | 2.618 | 21.507 (0.12x) | 7.134 (0.37x) | 13.224 (0.20x) |
-| q23 | 3.081 | 1.151 (2.68x) | 0.726 (4.24x) | 2.510 (1.23x) |
-| q24 | 1.291 | 1.191 (1.08x) | 0.780 (1.66x) | 1.706 (0.76x) |
-| q25 | 2.579 | 1.388 (1.86x) | 1.154 (2.24x) | 1.308 (1.97x) |
-| q26 | 1.222 | 3.280 (0.37x) | 1.112 (1.10x) | 3.014 (0.41x) |
-| q27 | 2.518 | 14.305 (0.18x) | 3.492 (0.72x) | 24.665 (0.10x) |
-| q28 | 3.033 | 1.457 (2.08x) | 1.778 (1.71x) | 2.547 (1.19x) |
-| q29 | 2.359 | 0.965 (2.45x) | 0.874 (2.70x) | 2.645 (0.89x) |
-| q30 | 1055.151 | 153.493 (6.87x) | 88.728 (11.89x) | 35.090 (30.07x) |
+| Query | neo4j-2026.09.0 (ms) | kuzu-0.11.3 (ms) | ladybug-0.21.2 (ms) | lance-graph-0.5.4 (ms) | duckpgq-1.5.6 (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| q1 | 3.144 | 3.255 (0.97x) | 1.002 (3.14x) | 1.399 (2.25x) | 0.978 (3.22x) |
+| q2 | 4.659 | 1.582 (2.94x) | 1.169 (3.99x) | 2.295 (2.03x) | 3.450 (1.35x) |
+| q3 | 1.595 | 1.610 (0.99x) | 0.778 (2.05x) | 1.945 (0.82x) | 1.120 (1.42x) |
+| q4 | 3.111 | 1.073 (2.90x) | 0.368 (8.44x) | 3.021 (1.03x) | 1.545 (2.01x) |
+| q5 | 3.506 | 3.990 (0.88x) | 3.976 (0.88x) | 2.045 (1.71x) | 2.014 (1.74x) |
+| q6 | 2.523 | 1.045 (2.42x) | 0.787 (3.21x) | 0.724 (3.49x) | 0.554 (4.55x) |
+| q7 | 0.907 | 28.761 (0.03x) | 25.458 (0.04x) | 16.588 (0.05x) | 2.666 (0.34x) |
+| q8 | 13.512 | 2.798 (4.83x) | 3.520 (3.84x) | 1.607 (8.41x) | 1.825 (7.40x) |
+| q9 | 1.620 | 1.912 (0.85x) | 1.329 (1.22x) | 2.326 (0.70x) | 1.158 (1.40x) |
+| q10 | 5.111 | 1.602 (3.19x) | 1.564 (3.27x) | 32.575 (0.16x) | 2.728 (1.87x) |
+| q11 | 14.937 | 8.925 (1.67x) | 4.077 (3.66x) | 3.272 (4.56x) | 2.690 (5.55x) |
+| q12 | 3.712 | 21.028 (0.18x) | 8.101 (0.46x) | 21.668 (0.17x) | 4.340 (0.86x) |
+| q13 | 9.454 | 44.763 (0.21x) | 5.699 (1.66x) | 9.785 (0.97x) | 3.382 (2.80x) |
+| q14 | 0.829 | 1.762 (0.47x) | 0.892 (0.93x) | 2.497 (0.33x) | 1.439 (0.58x) |
+| q15 | 2.706 | 3.031 (0.89x) | 1.104 (2.45x) | 2.170 (1.25x) | 1.295 (2.09x) |
+| q16 | 1.450 | 2.047 (0.71x) | 0.999 (1.45x) | 4.190 (0.35x) | 3.400 (0.43x) |
+| q17 | 3.608 | 3.164 (1.14x) | 1.721 (2.10x) | 2.392 (1.51x) | 1.365 (2.64x) |
+| q18 | 3.718 | 1.477 (2.52x) | 1.195 (3.11x) | 1.894 (1.96x) | 1.047 (3.55x) |
+| q19 | 6.824 | 16.762 (0.41x) | 3.150 (2.17x) | 20.963 (0.33x) | 4.327 (1.58x) |
+| q20 | 478.576 | 11.640 (41.11x) | 13.610 (35.16x) | 2.975 (160.88x) | 0.956 (500.39x) |
+| q21 | 1.000 | 0.434 (2.31x) | 0.515 (1.94x) | 1.515 (0.66x) | 0.662 (1.51x) |
+| q22 | 3.138 | 28.003 (0.11x) | 7.885 (0.40x) | 14.272 (0.22x) | 5.143 (0.61x) |
+| q23 | 4.778 | 1.173 (4.07x) | 0.734 (6.51x) | 2.470 (1.93x) | 1.131 (4.22x) |
+| q24 | 1.159 | 1.155 (1.00x) | 0.788 (1.47x) | 1.790 (0.65x) | 0.705 (1.64x) |
+| q25 | 3.744 | 1.432 (2.61x) | 1.373 (2.73x) | 1.354 (2.77x) | 0.850 (4.41x) |
+| q26 | 1.175 | 3.458 (0.34x) | 1.150 (1.02x) | 2.881 (0.41x) | 1.489 (0.79x) |
+| q27 | 2.765 | 14.323 (0.19x) | 4.495 (0.62x) | 24.698 (0.11x) | 2.881 (0.96x) |
+| q28 | 4.116 | 1.479 (2.78x) | 2.320 (1.77x) | 2.496 (1.65x) | 1.171 (3.52x) |
+| q29 | 3.357 | 0.998 (3.36x) | 0.760 (4.42x) | 2.733 (1.23x) | 1.231 (2.73x) |
+| q30 | 1255.746 | 149.549 (8.40x) | 92.893 (13.52x) | 38.173 (32.90x) | 26.809 (46.84x) |
 
-Latest CLI outputs: [Neo4j](results/neo4j-2025.12.1.txt), [Kuzu](results/kuzu-0.11.3.txt), [Ladybug 0.21.1](results/ladybug-0.21.1.txt), [Lance Graph](results/lance-graph-0.5.4.txt).
+![](results/benchmark_heatmap.png)
 
-Previous Ladybug CLI outputs: [0.21.0 archive](results/archived/ladybug-0.21.0.txt), [0.20.4 archive](results/archived/ladybug-0.20.4.txt), [0.20.2 archive](results/archived/ladybug-0.20.2.txt).
+CLI outputs: [Neo4j 2026.09.0](results/neo4j-2026.09.0.txt), [Kuzu 0.11.3](results/kuzu-0.11.3.txt), [Ladybug 0.21.2](results/ladybug-0.21.2.txt), [lance-graph 0.5.4](results/lance-graph-0.5.4.txt), [DuckPGQ](results/duckpgq-1.5.6.txt).
+
+Previous results are in [`results/archived/`](results/archived/): Neo4j 2025.12.1, Kuzu 0.11.3 and lance-graph 0.5.4 from 2026-09-03, and Ladybug 0.21.1, 0.21.0, 0.20.4 and 0.20.2.

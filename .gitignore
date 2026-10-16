@@ -139,3 +139,6 @@ social_network-sf1-CsvBasic-StringDateFormatter.tar.zst
 *.lbug
 *.lance
 results/2026*
+# DuckDB / DuckPGQ
+*.duckdb
+*.duckdb.wal

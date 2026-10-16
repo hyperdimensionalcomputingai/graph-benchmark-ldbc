@@ -14,6 +14,16 @@ UNIT_TO_MS = {
 }
 ROUND_MS_DECIMALS = 1
 SPEEDUP_DECIMALS = 1
+# Column order for tables and plots; unlisted engines go last, alphabetically.
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq"]
+
+
+def engine_sort_key(path: Path) -> tuple[int, str]:
+    stem = path.stem.lower()
+    for idx, engine in enumerate(ENGINE_ORDER):
+        if stem.startswith(engine):
+            return (idx, stem)
+    return (len(ENGINE_ORDER), stem)
 
 
 def normalize_name(name: str) -> str:
@@ -124,16 +134,13 @@ def plot_results(
 
 def main() -> None:
     results_dir = Path(__file__).resolve().parent
-    files = sorted(results_dir.glob("*.txt"))
+    files = sorted(results_dir.glob("*.txt"), key=engine_sort_key)
     if not files:
         raise SystemExit("No .txt files found in results directory.")
 
-    neo4j_system: str | None = None
-    for idx, path in enumerate(files):
-        if "neo4j" in path.stem:
-            files.insert(0, files.pop(idx))
-            neo4j_system = path.stem
-            break
+    neo4j_system: str | None = next(
+        (path.stem for path in files if "neo4j" in path.stem), None
+    )
 
     systems = [path.stem for path in files]
     system_results = {path.stem: parse_benchmark_file(path) for path in files}
