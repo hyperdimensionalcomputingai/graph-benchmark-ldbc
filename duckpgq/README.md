@@ -64,6 +64,8 @@ uv run query.py
 uv run query.py "1,2,6"
 ```
 
+A query that runs longer than `QUERY_TIMEOUT_SECONDS` (default `10`) fails with `TimeoutError`. DuckDB has no per-query timeout setting, so a watchdog thread cancels the query with `conn.interrupt()`; the connection stays usable for the next query.
+
 Notes on the translation:
 
 - The pattern inside `GRAPH_TABLE` returns a table via the `COLUMNS (...)` clause. `DISTINCT`, aggregations, `ORDER BY` and `LIMIT` are expressed in the surrounding SQL.
