@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "faker>=40.1.2",
+    "falkordb>=1.7.1",
     "kuzu>=0.11.3",
     "duckdb==1.5.6",
     "ladybug==0.21.2",
