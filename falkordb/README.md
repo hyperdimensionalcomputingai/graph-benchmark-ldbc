@@ -67,10 +67,12 @@ uv run --frozen pytest benchmark_query.py \
 
 ## Results
 
-Measured on **2026-10-10** on an AMD Ryzen 9 6900HS (16 logical CPUs, 30 GiB RAM) running Linux 7.1.3 and Python 3.14.0, with FalkorDB 6.0.2 in Docker started from the provided `docker-compose.yml` (`THREAD_COUNT` and `OMP_THREAD_COUNT` 16, server-side query timeouts disabled, unlimited result set size) and the harness's 10-second per-query timeout. This is a different machine from the Apple M5 used for the other engines, so these numbers are not directly comparable with the main table.
+Measured on **2026-10-16** on the Apple M5 used for the other engines (see the [main README](../README.md#high-level-results)), with FalkorDB 6.0.2 in Docker Desktop started from the provided `docker-compose.yml` (`THREAD_COUNT` and `OMP_THREAD_COUNT` 10, server-side query timeouts disabled, unlimited result set size) and the harness's 10-second per-query timeout. FalkorDB is the last column of the main table.
 
 [CLI output](../results/falkordb-6.0.2.txt) · [Raw benchmark JSON](../results/falkordb-6.0.2.json)
 
-After loading, `GRAPH.MEMORY USAGE` reports 2.97 GB for the graph. Ingestion took about 20 minutes, almost all of it for the 17,256,038 relationships; it was timed on a busy machine, so treat that as approximate.
+After loading, `GRAPH.MEMORY USAGE` reports 2,824 MB for the graph. `build_graph.py` took about 11.5 minutes, almost all of it for the 17,256,038 relationships.
 
-Q30 exceeds the 10-second limit and fails with `TimeoutError`; without the limit it averaged 75.2 s over five rounds. Its planner starts from each `Person`, pairs all of that person's comments with all of their posts (about 447M candidate pairs) and only then checks `replyOfPost`. The other 29 queries pass their result assertions and average under 10 ms. The query text is identical to Neo4j's for all 30 queries.
+Q30 exceeds the 10-second limit and fails with `TimeoutError`. Without the limit it averaged 75.2 s over five rounds on an AMD Ryzen 9 6900HS. Its planner starts from each `Person`, pairs all of that person's comments with all of their posts (about 447M candidate pairs) and only then checks `replyOfPost`. The other 29 queries pass their result assertions and average under 7 ms (slowest: Q11 at 6.7 ms). The query text is identical to Neo4j's for all 30 queries.
+
+The earlier run on the Ryzen 9 6900HS (16 logical CPUs, 30 GiB RAM, Linux 7.1.3, Python 3.14.0, 2026-10-10) is archived: [CLI output](../results/archived/falkordb-6.0.2-ryzen-2026-10-10.txt) · [Raw benchmark JSON](../results/archived/falkordb-6.0.2-ryzen-2026-10-10.json)

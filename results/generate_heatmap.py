@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 
 HEADER_RE = re.compile(r"Name \(time in (?P<unit>[^)]+)\)")
+TIMEOUT_RE = re.compile(r"^FAILED \S+::(?P<name>\S+) - TimeoutError")
 UNIT_TO_MS = {
     "s": 1000.0,
     "ms": 1.0,
@@ -63,6 +64,11 @@ def parse_benchmark_file(path: Path) -> dict[str, float]:
     return means_ms
 
 
+def parse_timeouts(path: Path) -> set[str]:
+    matches = (TIMEOUT_RE.match(line) for line in path.read_text().splitlines())
+    return {match["name"] for match in matches if match}
+
+
 def sort_query_key(name: str) -> tuple[int, int | str]:
     match = re.search(r"query(\d+)", name)
     if match:
@@ -86,9 +92,6 @@ def _find_result_files(results_dir: Path) -> list[Path]:
         if path.name in skip:
             continue
         if path.suffix in {".py", ".png"}:
-            continue
-        # FalkorDB was measured on different hardware than the other engines
-        if path.stem.startswith("falkordb"):
             continue
         files.append(path)
     return files
@@ -118,6 +121,7 @@ def plot_heatmap(
     systems: list[str],
     queries: list[str],
     values_by_query: list[list[float | None]],
+    timed_out: list[list[bool]],
     output_path: Path,
     *,
     annotate_extremes: bool,
@@ -182,6 +186,15 @@ def plot_heatmap(
         vmin=vmin,
         vmax=vmax,
     )
+    # Timed-out cells take the slowest color and are labeled instead of timed.
+    for r, row in enumerate(timed_out):
+        for c, is_timeout in enumerate(row):
+            if is_timeout:
+                ax.add_patch(
+                    plt.Rectangle((c - 0.5, r - 0.5), 1, 1, color=cmap(1.0), zorder=2)
+                )
+                ax.text(c, r, "timeout", ha="center", va="center", fontsize=9, zorder=3)
+
     ax.set_title("Graph Benchmark Timing Heatmap (transparent=fast, red=slow)")
 
     ax.set_xticks(np.arange(cols))
@@ -220,6 +233,9 @@ def plot_heatmap(
                 continue
             min_c, _ = min(present, key=lambda t: t[1])
             max_c, _ = max(present, key=lambda t: t[1])
+            # A timeout is slower than any measured time, and its label marks it.
+            if any(timed_out[r]):
+                max_c = None
 
             ax.scatter(
                 [min_c],
@@ -231,6 +247,8 @@ def plot_heatmap(
                 linewidths=1.2,
                 zorder=3,
             )
+            if max_c is None:
+                continue
             ax.scatter(
                 [max_c],
                 [r],
@@ -276,19 +294,22 @@ def main() -> None:
         raise SystemExit("No benchmark result files found in results directory.")
 
     parsed: dict[str, dict[str, float]] = {}
+    timeouts: dict[str, set[str]] = {}
     for path in files:
         try:
             parsed[path.stem] = parse_benchmark_file(path)
         except ValueError:
             # Ignore non-benchmark files; keeps the script robust to extra artifacts.
             continue
+        timeouts[path.stem] = parse_timeouts(path)
 
     if not parsed:
         raise SystemExit("No benchmark tables detected in results directory.")
 
     systems = sorted(parsed.keys(), key=engine_sort_key)
     all_queries = sorted(
-        {q for results in parsed.values() for q in results.keys()},
+        {q for results in parsed.values() for q in results.keys()}
+        | {q for names in timeouts.values() for q in names},
         key=sort_query_key,
     )
     display_queries = [q.replace("test_benchmark_query", "q") for q in all_queries]
@@ -299,11 +320,13 @@ def main() -> None:
         for system in systems:
             row.append(parsed[system].get(query))
         values_by_query.append(row)
+    timed_out = [[query in timeouts[system] for system in systems] for query in all_queries]
 
     plot_heatmap(
         systems,
         display_queries,
         values_by_query,
+        timed_out,
         args.output,
         annotate_extremes=not args.no_extremes,
     )
