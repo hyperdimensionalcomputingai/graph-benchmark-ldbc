@@ -14,6 +14,7 @@ The following systems are compared:
 - Kuzu (now archived)
 - Ladybug
 - lance-graph
+- DuckPGQ (DuckDB with the SQL/PGQ community extension)
 
 ## Setup
 

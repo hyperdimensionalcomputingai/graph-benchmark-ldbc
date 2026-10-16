@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "faker>=40.1.2",
     "kuzu>=0.11.3",
+    "duckdb==1.5.6",
     "ladybug==0.21.1",
     "lance-graph>=0.5.4",
     "matplotlib>=3.10.8",
