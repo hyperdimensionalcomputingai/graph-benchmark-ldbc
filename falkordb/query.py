@@ -5,17 +5,25 @@ from typing import Any, Callable
 
 from dotenv import load_dotenv
 from falkordb import FalkorDB, Graph
+from redis.exceptions import ResponseError
 
 load_dotenv()
 
 FALKORDB_HOST = os.environ.get("FALKORDB_HOST", "localhost")
 FALKORDB_PORT = int(os.environ.get("FALKORDB_PORT", "6379"))
 FALKORDB_GRAPH = os.environ.get("FALKORDB_GRAPH", "ldbc_snb_sf1")
+# Queries running longer than this fail instead of being timed.
+QUERY_TIMEOUT_SECONDS = float(os.environ.get("QUERY_TIMEOUT_SECONDS", "10"))
 
 
 def _execute(graph: Graph, idx: int, query: str) -> list[dict[str, Any]]:
     print(f"\nQuery {idx}:\n{query}")
-    result = graph.ro_query(query)
+    try:
+        result = graph.ro_query(query, timeout=int(QUERY_TIMEOUT_SECONDS * 1000))
+    except ResponseError as e:
+        if "timed out" in str(e):
+            raise TimeoutError(f"query {idx} exceeded {QUERY_TIMEOUT_SECONDS:g} s") from e
+        raise
     names = [name for _, name in result.header]
     records = [dict(zip(names, row)) for row in result.result_set]
     print(records)

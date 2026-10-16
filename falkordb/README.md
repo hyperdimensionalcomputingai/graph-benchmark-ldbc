@@ -16,6 +16,7 @@ The scripts connect with the [`falkordb`](https://pypi.org/project/falkordb/) Py
 - `FALKORDB_PORT` (optional, defaults to `6379`; also sets the host port in `docker-compose.yml`)
 - `FALKORDB_GRAPH` (optional, defaults to `ldbc_snb_sf1`)
 - `FALKORDB_VERSION` (optional, Docker image tag, defaults to `6.0.2`)
+- `QUERY_TIMEOUT_SECONDS` (optional, defaults to `10`)
 
 ## Build graph
 
@@ -66,10 +67,10 @@ uv run --frozen pytest benchmark_query.py \
 
 ## Results
 
-Measured on **2026-10-10** on an AMD Ryzen 9 6900HS (16 logical CPUs, 30 GiB RAM) running Linux 7.1.3 and Python 3.14.8, with FalkorDB 6.0.2 in Docker started from the provided `docker-compose.yml` (`THREAD_COUNT` and `OMP_THREAD_COUNT` 16, query timeouts disabled, unlimited result set size). This is a different machine from the Apple M5 used for the other engines, so these numbers are not directly comparable with the main table.
+Measured on **2026-10-10** on an AMD Ryzen 9 6900HS (16 logical CPUs, 30 GiB RAM) running Linux 7.1.3 and Python 3.14.0, with FalkorDB 6.0.2 in Docker started from the provided `docker-compose.yml` (`THREAD_COUNT` and `OMP_THREAD_COUNT` 16, server-side query timeouts disabled, unlimited result set size) and the harness's 10-second per-query timeout. This is a different machine from the Apple M5 used for the other engines, so these numbers are not directly comparable with the main table.
 
 [CLI output](../results/falkordb-6.0.2.txt) · [Raw benchmark JSON](../results/falkordb-6.0.2.json)
 
 After loading, `GRAPH.MEMORY USAGE` reports 2.97 GB for the graph. Ingestion took about 20 minutes, almost all of it for the 17,256,038 relationships; it was timed on a busy machine, so treat that as approximate.
 
-All 30 queries passed their result assertions with the benchmark settings above. Apart from Q30, every query averages under 10 ms. Q30 averages 75.2 s over five rounds: the planner starts from each `Person`, pairs all of that person's comments with all of their posts (about 447M candidate pairs) and only then checks `replyOfPost`. The query text is identical to Neo4j's for all 30 queries.
+Q30 exceeds the 10-second limit and fails with `TimeoutError`; without the limit it averaged 75.2 s over five rounds. Its planner starts from each `Person`, pairs all of that person's comments with all of their posts (about 447M candidate pairs) and only then checks `replyOfPost`. The other 29 queries pass their result assertions and average under 10 ms. The query text is identical to Neo4j's for all 30 queries.

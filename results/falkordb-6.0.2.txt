@@ -1,53 +1,192 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.14.8, pytest-9.0.2, pluggy-1.6.0
+platform linux -- Python 3.14.0, pytest-9.0.2, pluggy-1.6.0
 benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=True min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=5)
-rootdir: /home/darek/repos/137s/graph-benchmark-ldbc-complex
+rootdir: /tmp/gb-falkordb
 configfile: pyproject.toml
-plugins: anyio-4.12.1, benchmark-5.2.3, asyncio-1.3.0, Faker-40.1.2
+plugins: benchmark-5.2.3, anyio-4.12.1, asyncio-1.3.0, Faker-40.1.2
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
 collected 30 items
 
-benchmark_query.py ..............................                        [100%]
+benchmark_query.py .............................F                        [100%]
 Wrote benchmark data in: <_io.BufferedWriter name='../results/falkordb-6.0.2.json'>
 
 
+=================================== FAILURES ===================================
+____________________________ test_benchmark_query30 ____________________________
 
------------------------------------------------------------------------------------------------------------ benchmark: 30 tests -----------------------------------------------------------------------------------------------------------
-Name (time in us)                      Min                        Max                       Mean                  StdDev                     Median                       IQR            Outliers         OPS            Rounds  Iterations
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-test_benchmark_query1             199.0418 (1.28)            551.6019 (1.12)            263.7304 (1.19)          35.7608 (1.16)            257.3710 (1.19)            42.1788 (1.52)       227;22  3,791.7509 (0.84)        903           1
-test_benchmark_query10            187.3500 (1.20)            751.1759 (1.52)            248.6442 (1.12)          34.7794 (1.13)            241.5670 (1.12)            36.1581 (1.31)       511;76  4,021.8118 (0.89)       2326           1
-test_benchmark_query11          8,713.5741 (56.02)        13,823.2540 (28.05)         9,922.2412 (44.83)        771.3907 (25.00)         9,718.9650 (44.94)          811.5304 (29.31)        23;3    100.7837 (0.02)         89           1
-test_benchmark_query12          1,300.2830 (8.36)          3,628.9799 (7.36)          2,055.9575 (9.29)         476.5972 (15.45)         1,993.5805 (9.22)           716.8464 (25.89)        97;1    486.3914 (0.11)        272           1
-test_benchmark_query13          3,093.8089 (19.89)         6,885.2522 (13.97)         4,552.4565 (20.57)        804.9540 (26.09)         4,557.2264 (21.07)        1,235.6675 (44.64)        53;0    219.6616 (0.05)        152           1
-test_benchmark_query14            165.4401 (1.06)            625.3701 (1.27)            230.8165 (1.04)          38.1954 (1.24)            223.7889 (1.03)            40.7386 (1.47)       360;58  4,332.4455 (0.96)       1835           1
-test_benchmark_query15            226.1030 (1.45)            786.5219 (1.60)            326.2121 (1.47)          45.3119 (1.47)            319.8190 (1.48)            57.2297 (2.07)       473;28  3,065.4902 (0.68)       1745           1
-test_benchmark_query16          6,719.8130 (43.20)        10,022.1022 (20.33)         7,413.1696 (33.50)        457.0250 (14.81)         7,361.3034 (34.04)          474.1676 (17.13)        23;4    134.8951 (0.03)        132           1
-test_benchmark_query17          1,261.1800 (8.11)          5,471.3481 (11.10)         1,648.1689 (7.45)         399.9183 (12.96)         1,561.1106 (7.22)           393.5450 (14.22)       28;12    606.7340 (0.13)        510           1
-test_benchmark_query18            493.7239 (3.17)          1,116.4690 (2.27)            630.5827 (2.85)          97.9608 (3.17)            596.5715 (2.76)           159.5885 (5.76)        221;5  1,585.8348 (0.35)        736           1
-test_benchmark_query19          2,438.0619 (15.67)         4,922.6910 (9.99)          3,161.3387 (14.28)        397.3478 (12.88)         3,142.9110 (14.53)          529.5305 (19.13)        89;4    316.3217 (0.07)        260           1
-test_benchmark_query2           7,141.8430 (45.91)        10,293.6900 (20.89)         7,813.0320 (35.30)        512.7553 (16.62)         7,734.5411 (35.76)          543.1718 (19.62)        21;6    127.9913 (0.03)        125           1
-test_benchmark_query20            330.5590 (2.13)            857.1830 (1.74)            426.3980 (1.93)          59.9091 (1.94)            409.7666 (1.89)            90.8200 (3.28)       390;12  2,345.2266 (0.52)       1400           1
-test_benchmark_query21            235.9408 (1.52)            650.1770 (1.32)            330.0455 (1.49)          49.3858 (1.60)            321.7119 (1.49)            64.3834 (2.33)       396;16  3,029.8856 (0.67)       1315           1
-test_benchmark_query22            606.8251 (3.90)          1,140.2329 (2.31)            766.0063 (3.46)         109.1627 (3.54)            726.6545 (3.36)           199.6980 (7.21)        211;0  1,305.4723 (0.29)        552           1
-test_benchmark_query23            221.3640 (1.42)            666.4072 (1.35)            315.3187 (1.42)          45.3953 (1.47)            309.5794 (1.43)            55.5640 (2.01)       510;32  3,171.3941 (0.70)       1824           1
-test_benchmark_query24            182.7721 (1.17)            627.8551 (1.27)            259.2443 (1.17)          32.5218 (1.05)            254.7868 (1.18)            32.2531 (1.17)       513;91  3,857.3656 (0.85)       2271           1
-test_benchmark_query25            155.5511 (1.0)             680.7439 (1.38)            221.3205 (1.0)           30.8554 (1.0)             216.6962 (1.00)            27.6835 (1.0)       493;149  4,518.3341 (1.0)        2543           1
-test_benchmark_query26            282.3090 (1.81)            727.3511 (1.48)            371.6871 (1.68)          51.9376 (1.68)            365.0130 (1.69)            68.7936 (2.49)       350;25  2,690.4352 (0.60)       1253           1
-test_benchmark_query27            802.1800 (5.16)          2,149.3109 (4.36)          1,060.5220 (4.79)         195.1617 (6.33)          1,048.9330 (4.85)           275.0948 (9.94)       159;12    942.9319 (0.21)        571           1
-test_benchmark_query28          6,885.9041 (44.27)        10,773.7489 (21.86)         8,301.5130 (37.51)        617.0592 (20.00)         8,281.6761 (38.29)          695.8039 (25.13)        31;2    120.4600 (0.03)        111           1
-test_benchmark_query29          6,595.7520 (42.40)         9,545.3009 (19.37)         7,153.8618 (32.32)        508.0470 (16.47)         6,953.6609 (32.15)          393.1757 (14.20)       20;14    139.7846 (0.03)        135           1
-test_benchmark_query3           6,673.1048 (42.90)         9,195.9960 (18.66)         7,187.0229 (32.47)        413.4927 (13.40)         7,082.6919 (32.75)          537.9242 (19.43)        25;3    139.1397 (0.03)        121           1
-test_benchmark_query30     74,389,175.5170 (>1000.0)  75,728,603.3300 (>1000.0)  75,154,272.2106 (>1000.0)  593,120.9148 (>1000.0)  75,281,043.7661 (>1000.0)  1,064,959.3978 (>1000.0)       1;0      0.0133 (0.00)          5           1
-test_benchmark_query4             167.1130 (1.07)            505.0851 (1.02)            225.1657 (1.02)          34.1729 (1.11)            218.2629 (1.01)            34.1840 (1.23)       236;60  4,441.1743 (0.98)       1288           1
-test_benchmark_query5           1,477.3540 (9.50)          3,674.4149 (7.46)          2,148.4910 (9.71)         397.0039 (12.87)         2,107.3429 (9.74)           512.2307 (18.50)       105;6    465.4429 (0.10)        335           1
-test_benchmark_query6             167.1328 (1.07)            492.8720 (1.0)             224.6066 (1.01)          31.8229 (1.03)            216.2645 (1.0)             31.1384 (1.12)      363;105  4,452.2293 (0.99)       1860           1
-test_benchmark_query7             671.3560 (4.32)          1,439.4929 (2.92)            879.8705 (3.98)         128.6556 (4.17)            882.8619 (4.08)           227.3337 (8.21)        192;2  1,136.5308 (0.25)        477           1
-test_benchmark_query8           2,387.4070 (15.35)         4,637.9170 (9.41)          2,962.6516 (13.39)        419.0305 (13.58)         2,893.1230 (13.38)          432.5485 (15.62)        53;9    337.5355 (0.07)        224           1
-test_benchmark_query9             184.2352 (1.18)            823.1711 (1.67)            260.1151 (1.18)          37.6320 (1.22)            253.7351 (1.17)            40.6061 (1.47)       460;56  3,844.4515 (0.85)       1982           1
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+graph = <falkordb.graph.Graph object at 0x7c9de5a43380>, idx = 30
+query = '\n        MATCH (c:Comment)-[:commentHasCreator]->(creator:Person),\n              (c)-[:replyOfPost]->(post:Post)-[:postHasCreator]->(creator)\n        RETURN COUNT(DISTINCT c.ID) > 0 AS has_self_reply;\n    '
+
+    def _execute(graph: Graph, idx: int, query: str) -> list[dict[str, Any]]:
+        print(f"\nQuery {idx}:\n{query}")
+        try:
+>           result = graph.ro_query(query, timeout=int(QUERY_TIMEOUT_SECONDS * 1000))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+query.py:22: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/falkordb/graph.py:147: in ro_query
+    return self._query(q, params=params, timeout=timeout, read_only=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/falkordb/graph.py:97: in _query
+    response = self.execute_command(*command)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/client.py:867: in execute_command
+    return self._execute_command(*args, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/client.py:889: in _execute_command
+    result = conn.retry.call_with_retry(
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/retry.py:120: in call_with_retry
+    return do()
+           ^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/client.py:890: in <lambda>
+    lambda: self._send_command_parse_response(
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/client.py:819: in _send_command_parse_response
+    return self.parse_response(conn, command_name, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/client.py:935: in parse_response
+    response = connection.read_response()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <redis.connection.Connection(host=localhost,port=6380,db=0)>
+disable_decoding = False
+
+    def read_response(
+        self,
+        disable_decoding=False,
+        *,
+        timeout: Union[float, object] = SENTINEL,
+        disconnect_on_error=True,
+        push_request=False,
+    ):
+        """Read the response from a previously sent command"""
+    
+        host_error = self._host_error()
+    
+        try:
+            if self.protocol in ["3", 3]:
+                response = self._parser.read_response(
+                    disable_decoding=disable_decoding,
+                    push_request=push_request,
+                    timeout=timeout,
+                )
+            else:
+                response = self._parser.read_response(
+                    disable_decoding=disable_decoding, timeout=timeout
+                )
+        except socket.timeout:
+            if disconnect_on_error:
+                self.disconnect()
+            raise TimeoutError(f"Timeout reading from {host_error}")
+        except OSError as e:
+            if disconnect_on_error:
+                self.disconnect()
+            raise ConnectionError(f"Error while reading from {host_error} : {e.args}")
+        except BaseException:
+            # Also by default close in case of BaseException.  A lot of code
+            # relies on this behaviour when doing Command/Response pairs.
+            # See #1128.
+            if disconnect_on_error:
+                self.disconnect()
+            raise
+    
+        if self.health_check_interval:
+            self.next_health_check = time.monotonic() + self.health_check_interval
+    
+        if isinstance(response, ResponseError):
+            try:
+>               raise response
+E               redis.exceptions.ResponseError: Query timed out
+
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/redis/connection.py:1437: ResponseError
+
+The above exception was the direct cause of the following exception:
+
+benchmark = <pytest_benchmark.fixture.BenchmarkFixture object at 0x7c9de59b23f0>
+graph = <falkordb.graph.Graph object at 0x7c9de5a43380>
+
+    def test_benchmark_query30(benchmark, graph):
+>       result = benchmark(query.run_query30, graph)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+benchmark_query.py:237: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/pytest_benchmark/fixture.py:184: in __call__
+    return self._raw(function_to_benchmark, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/pytest_benchmark/fixture.py:216: in _raw
+    duration, iterations, loops_range = self._calibrate_timer(runner)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/pytest_benchmark/fixture.py:370: in _calibrate_timer
+    duration = runner(loops_range)
+               ^^^^^^^^^^^^^^^^^^^
+/home/darek/repos/137s/graph-benchmark-ldbc/.venv/lib/python3.14/site-packages/pytest_benchmark/fixture.py:138: in runner
+    function_to_benchmark(*args, **kwargs)
+query.py:357: in run_query30
+    return _execute(graph, 30, query)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+graph = <falkordb.graph.Graph object at 0x7c9de5a43380>, idx = 30
+query = '\n        MATCH (c:Comment)-[:commentHasCreator]->(creator:Person),\n              (c)-[:replyOfPost]->(post:Post)-[:postHasCreator]->(creator)\n        RETURN COUNT(DISTINCT c.ID) > 0 AS has_self_reply;\n    '
+
+    def _execute(graph: Graph, idx: int, query: str) -> list[dict[str, Any]]:
+        print(f"\nQuery {idx}:\n{query}")
+        try:
+            result = graph.ro_query(query, timeout=int(QUERY_TIMEOUT_SECONDS * 1000))
+        except ResponseError as e:
+            if "timed out" in str(e):
+>               raise TimeoutError(f"query {idx} exceeded {QUERY_TIMEOUT_SECONDS:g} s") from e
+E               TimeoutError: query 30 exceeded 10 s
+
+query.py:25: TimeoutError
+----------------------------- Captured stdout call -----------------------------
+
+Query 30:
+
+        MATCH (c:Comment)-[:commentHasCreator]->(creator:Person),
+              (c)-[:replyOfPost]->(post:Post)-[:postHasCreator]->(creator)
+        RETURN COUNT(DISTINCT c.ID) > 0 AS has_self_reply;
+    
+
+--------------------------------------------------------------------------------------------- benchmark: 29 tests ----------------------------------------------------------------------------------------------
+Name (time in us)                 Min                    Max                  Mean              StdDev                Median                   IQR            Outliers         OPS            Rounds  Iterations
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+test_benchmark_query1        205.4160 (1.33)        743.0429 (1.61)       287.8558 (1.39)      61.6886 (2.52)       275.7976 (1.38)        47.8697 (2.22)        62;25  3,473.9616 (0.72)        658           1
+test_benchmark_query10       195.1461 (1.26)        722.8360 (1.56)       262.4956 (1.27)      37.2155 (1.52)       253.6310 (1.27)        48.9571 (2.27)       726;38  3,809.5876 (0.79)       2648           1
+test_benchmark_query11     8,149.4190 (52.58)    10,776.2229 (23.29)    9,195.2988 (44.56)    646.0377 (26.44)    9,063.9881 (45.44)      910.0360 (42.22)        32;0    108.7512 (0.02)         90           1
+test_benchmark_query12     1,244.3031 (8.03)      2,952.9862 (6.38)     1,514.5331 (7.34)     304.1052 (12.45)    1,375.9346 (6.90)       333.2250 (15.46)       35;15    660.2695 (0.14)        280           1
+test_benchmark_query13     2,730.7291 (17.62)     5,549.3640 (12.00)    3,439.2999 (16.67)    643.3052 (26.33)    3,207.0728 (16.08)    1,060.5129 (49.21)        68;1    290.7568 (0.06)        223           1
+test_benchmark_query14       190.4669 (1.23)        463.1081 (1.00)       239.1953 (1.16)      24.4358 (1.0)        232.9361 (1.17)        21.5526 (1.0)       285;108  4,180.6849 (0.86)       1771           1
+test_benchmark_query15       221.4650 (1.43)        542.0360 (1.17)       302.4225 (1.47)      42.2141 (1.73)       294.4421 (1.48)        49.2923 (2.29)       554;50  3,306.6319 (0.68)       1905           1
+test_benchmark_query16     6,683.0900 (43.12)    10,586.5581 (22.88)    7,637.7912 (37.01)    648.4222 (26.54)    7,485.9338 (37.53)      604.1798 (28.03)        26;6    130.9279 (0.03)        121           1
+test_benchmark_query17     1,232.0501 (7.95)      2,026.2490 (4.38)     1,409.4320 (6.83)     169.1819 (6.92)     1,341.4249 (6.72)       205.6684 (9.54)        88;12    709.5057 (0.15)        487           1
+test_benchmark_query18       451.3061 (2.91)      1,143.9249 (2.47)       557.8159 (2.70)      75.5194 (3.09)       525.1541 (2.63)       108.0881 (5.02)        178;4  1,792.7061 (0.37)        736           1
+test_benchmark_query19     2,275.2651 (14.68)     4,722.2339 (10.21)    2,968.8743 (14.39)    529.0071 (21.65)    2,866.0130 (14.37)      739.6869 (34.32)       100;7    336.8280 (0.07)        305           1
+test_benchmark_query2      7,117.4251 (45.92)    11,053.0029 (23.89)    7,917.2353 (38.37)    543.0645 (22.22)    7,809.2411 (39.15)      624.9790 (29.00)        31;2    126.3067 (0.03)        133           1
+test_benchmark_query20       336.3299 (2.17)        681.5779 (1.47)       411.7984 (2.00)      57.0740 (2.34)       386.8761 (1.94)        78.0860 (3.62)       244;13  2,428.3726 (0.50)       1001           1
+test_benchmark_query21       231.6940 (1.49)      1,056.6909 (2.28)       313.3380 (1.52)      49.1077 (2.01)       303.2691 (1.52)        59.7466 (2.77)       423;25  3,191.4415 (0.66)       1571           1
+test_benchmark_query22       562.1240 (3.63)      1,147.9130 (2.48)       699.2860 (3.39)     102.7427 (4.20)       660.0774 (3.31)       166.6830 (7.73)        251;3  1,430.0302 (0.30)        784           1
+test_benchmark_query23       220.8638 (1.43)        523.4920 (1.13)       309.3923 (1.50)      45.4939 (1.86)       299.7920 (1.50)        59.3943 (2.76)       544;37  3,232.1422 (0.67)       1733           1
+test_benchmark_query24       193.4220 (1.25)        641.4319 (1.39)       261.9657 (1.27)      36.4795 (1.49)       254.1661 (1.27)        39.6616 (1.84)       446;57  3,817.2931 (0.79)       1805           1
+test_benchmark_query25       154.9800 (1.0)         471.1030 (1.02)       206.3655 (1.0)       28.3211 (1.16)       199.4791 (1.0)         28.2233 (1.31)      590;142  4,845.7703 (1.0)        2514           1
+test_benchmark_query26       263.8551 (1.70)        711.6850 (1.54)       356.7186 (1.73)      48.7966 (2.00)       353.1970 (1.77)        77.4460 (3.59)        559;5  2,803.3298 (0.58)       1498           1
+test_benchmark_query27       724.0670 (4.67)      1,419.9419 (3.07)       940.3817 (4.56)     139.1368 (5.69)       941.6700 (4.72)       247.2136 (11.47)       208;0  1,063.3979 (0.22)        524           1
+test_benchmark_query28     5,918.3759 (38.19)     9,365.1682 (20.24)    7,102.8113 (34.42)    773.2523 (31.64)    7,057.5819 (35.38)    1,125.3550 (52.21)        43;1    140.7893 (0.03)        124           1
+test_benchmark_query29     6,513.5611 (42.03)     8,586.4980 (18.56)    6,853.3054 (33.21)    305.8923 (12.52)    6,770.5030 (33.94)      258.0186 (11.97)       22;10    145.9150 (0.03)        144           1
+test_benchmark_query3      6,762.3381 (43.63)    10,226.6641 (22.11)    7,529.2712 (36.49)    624.5009 (25.56)    7,385.1360 (37.02)      704.8610 (32.70)        26;4    132.8150 (0.03)        126           1
+test_benchmark_query4        160.4098 (1.04)        508.0330 (1.10)       224.3231 (1.09)      35.2136 (1.44)       216.8965 (1.09)        37.2089 (1.73)       301;59  4,457.8556 (0.92)       1222           1
+test_benchmark_query5      1,434.0780 (9.25)      2,911.1579 (6.29)     1,829.4795 (8.87)     309.9030 (12.68)    1,793.2269 (8.99)       517.8202 (24.03)       140;1    546.6035 (0.11)        370           1
+test_benchmark_query6        164.5489 (1.06)        462.6180 (1.0)        231.2169 (1.12)      35.6971 (1.46)       224.3111 (1.12)        40.2307 (1.87)       625;90  4,324.9437 (0.89)       2563           1
+test_benchmark_query7        614.3921 (3.96)      1,418.4001 (3.07)       851.2360 (4.12)     140.1401 (5.74)       848.6216 (4.25)       224.4811 (10.42)       197;4  1,174.7624 (0.24)        542           1
+test_benchmark_query8      2,427.6620 (15.66)     4,221.0938 (9.12)     2,900.7189 (14.06)    336.0504 (13.75)    2,852.4979 (14.30)      574.4716 (26.65)       116;1    344.7421 (0.07)        301           1
+test_benchmark_query9        188.2629 (1.21)        534.5431 (1.16)       254.5149 (1.23)      35.5222 (1.45)       244.2780 (1.22)        48.2184 (2.24)       407;23  3,929.0429 (0.81)       1435           1
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Legend:
   Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
   OPS: Operations Per Second, computed as 1 / Mean
-======================== 30 passed in 544.52s (0:09:04) ========================
+=========================== short test summary info ============================
+FAILED benchmark_query.py::test_benchmark_query30 - TimeoutError: query 30 ex...
+======================== 1 failed, 29 passed in 31.11s =========================
