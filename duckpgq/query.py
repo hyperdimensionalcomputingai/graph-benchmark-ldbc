@@ -14,7 +14,9 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import sys
+import threading
 import time
 from typing import Callable
 
@@ -23,11 +25,59 @@ import polars as pl
 
 from common import DB_PATH, PROPERTY_GRAPH_NAME as G, connect, duckdb_version, duckpgq_version
 
+# Queries running longer than this fail instead of being timed.
+QUERY_TIMEOUT_SECONDS = float(os.environ.get("QUERY_TIMEOUT_SECONDS", "10"))
+
+
+class _Watchdog:
+    """Interrupts the armed connection once its deadline passes.
+
+    DuckDB has no per-query timeout setting, but conn.interrupt() cancels the
+    running query and leaves the connection usable. One long-lived thread does
+    this, so arming it costs a lock and a notify rather than a thread start.
+    """
+
+    def __init__(self) -> None:
+        self._cond = threading.Condition()
+        self._conn: duckdb.DuckDBPyConnection | None = None
+        self._deadline = 0.0
+        threading.Thread(target=self._run, daemon=True).start()
+
+    def arm(self, conn: duckdb.DuckDBPyConnection, seconds: float) -> None:
+        with self._cond:
+            self._conn, self._deadline = conn, time.monotonic() + seconds
+            self._cond.notify()
+
+    def disarm(self) -> None:
+        # Holding the lock means no interrupt can land after this returns.
+        with self._cond:
+            self._conn = None
+
+    def _run(self) -> None:
+        with self._cond:
+            while True:
+                if self._conn is None:
+                    self._cond.wait()
+                elif (remaining := self._deadline - time.monotonic()) > 0:
+                    self._cond.wait(remaining)
+                else:
+                    self._conn.interrupt()
+                    self._conn = None
+
+
+_WATCHDOG = _Watchdog()
+
 
 def _execute(conn: duckdb.DuckDBPyConnection, idx: int, query: str) -> pl.DataFrame:
     print(f"\nQuery {idx}:\n{query}")
-    # conn.sql() returns a relation that converts straight to a Polars DataFrame.
-    result = conn.sql(query).pl()
+    _WATCHDOG.arm(conn, QUERY_TIMEOUT_SECONDS)
+    try:
+        # conn.sql() returns a relation that converts straight to a Polars DataFrame.
+        result = conn.sql(query).pl()
+    except duckdb.InterruptException as e:
+        raise TimeoutError(f"query {idx} exceeded {QUERY_TIMEOUT_SECONDS:g} s") from e
+    finally:
+        _WATCHDOG.disarm()
     print(result)
     return result
 

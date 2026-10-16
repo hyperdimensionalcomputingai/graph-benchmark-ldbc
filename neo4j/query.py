@@ -5,7 +5,8 @@ import time
 from typing import Awaitable, Callable
 
 from dotenv import load_dotenv
-from neo4j import AsyncGraphDatabase, AsyncSession
+from neo4j import AsyncGraphDatabase, AsyncSession, Query
+from neo4j.exceptions import Neo4jError
 
 load_dotenv()
 
@@ -13,12 +14,19 @@ URI = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
 NEO4J_USER = os.environ.get("NEO4J_USER")
 NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
 NEO4J_DATABASE = os.environ.get("NEO4J_DATABASE", "neo4j")
+# Queries running longer than this fail instead of being timed.
+QUERY_TIMEOUT_SECONDS = float(os.environ.get("QUERY_TIMEOUT_SECONDS", "10"))
 
 
 async def _execute(session: AsyncSession, idx: int, query: str):
     print(f"\nQuery {idx}:\n{query}")
-    result = await session.run(query)
-    records = await result.data()
+    try:
+        result = await session.run(Query(query, timeout=QUERY_TIMEOUT_SECONDS))
+        records = await result.data()
+    except Neo4jError as e:
+        if "TransactionTimedOut" in e.code:
+            raise TimeoutError(f"query {idx} exceeded {QUERY_TIMEOUT_SECONDS:g} s") from e
+        raise
     print(records)
     return records
 

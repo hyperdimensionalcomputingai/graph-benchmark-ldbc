@@ -16,6 +16,7 @@ def connection():
     db = lb.Database(str(DB_PATH))
     conn = lb.Connection(db)
     conn.execute("ANALYZE")
+    conn.set_query_timeout(int(query.QUERY_TIMEOUT_SECONDS * 1000))
     yield conn
 
 

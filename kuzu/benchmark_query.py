@@ -15,6 +15,7 @@ DB_PATH = Path(__file__).with_name("ldbc_snb_sf1.kuzu")
 def connection():
     db = kuzu.Database(str(DB_PATH))
     conn = kuzu.Connection(db)
+    conn.set_query_timeout(int(query.QUERY_TIMEOUT_SECONDS * 1000))
     yield conn
 
 

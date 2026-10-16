@@ -14,6 +14,7 @@ variables:
 - `NEO4J_USER`
 - `NEO4J_PASSWORD`
 - `NEO4J_DATABASE` (optional, defaults to `neo4j`)
+- `QUERY_TIMEOUT_SECONDS` (optional, defaults to `10`)
 
 ## Build graph
 

@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 HEADER_RE = re.compile(r"Name \(time in (?P<unit>[^)]+)\)")
+TIMEOUT_RE = re.compile(r"^FAILED \S+::(?P<name>\S+) - TimeoutError")
 UNIT_TO_MS = {
     "s": 1000.0,
     "ms": 1.0,
@@ -57,6 +58,11 @@ def parse_benchmark_file(path: Path) -> dict[str, float]:
     if unit_scale is None:
         raise ValueError(f"Missing header with time unit in {path.name}")
     return means_ms
+
+
+def parse_timeouts(path: Path) -> set[str]:
+    matches = (TIMEOUT_RE.match(line) for line in path.read_text().splitlines())
+    return {match["name"] for match in matches if match}
 
 
 def sort_query_key(name: str) -> tuple[int, int | str]:
@@ -144,8 +150,10 @@ def main() -> None:
 
     systems = [path.stem for path in files]
     system_results = {path.stem: parse_benchmark_file(path) for path in files}
+    system_timeouts = {path.stem: parse_timeouts(path) for path in files}
     all_queries = sorted(
-        {query for results in system_results.values() for query in results},
+        {query for results in system_results.values() for query in results}
+        | {query for timeouts in system_timeouts.values() for query in timeouts},
         key=sort_query_key,
     )
 
@@ -166,7 +174,7 @@ def main() -> None:
             value = system_results[system].get(query)
             series.append(value)
             if value is None:
-                row.append("n/a")
+                row.append("timeout" if query in system_timeouts[system] else "n/a")
                 continue
             value_text = f"{format(value, f'.{ROUND_MS_DECIMALS}f')}ms"
             if (

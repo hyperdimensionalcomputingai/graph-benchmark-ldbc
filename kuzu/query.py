@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 from typing import Callable
@@ -5,11 +6,19 @@ from typing import Callable
 import kuzu
 from kuzu import Connection
 
+# Queries running longer than this fail instead of being timed.
+QUERY_TIMEOUT_SECONDS = float(os.environ.get("QUERY_TIMEOUT_SECONDS", "10"))
+
 
 def _execute(conn: Connection, idx: int, query: str):
     print(f"\nQuery {idx}:\n{query}")
-    response = conn.execute(query)
-    result = response.get_as_pl()  # type: ignore
+    try:
+        response = conn.execute(query)
+        result = response.get_as_pl()  # type: ignore
+    except RuntimeError as e:
+        if "Interrupted" in str(e):
+            raise TimeoutError(f"query {idx} exceeded {QUERY_TIMEOUT_SECONDS:g} s") from e
+        raise
     print(result)
     return result
 
@@ -409,5 +418,6 @@ if __name__ == "__main__":
     DB_NAME = "ldbc_snb_sf1.kuzu"
     db = kuzu.Database(f"./{DB_NAME}")
     conn = kuzu.Connection(db)
+    conn.set_query_timeout(int(QUERY_TIMEOUT_SECONDS * 1000))
     selected_queries = _parse_selection(sys.argv[1:])
     main(conn, selected_queries)

@@ -138,6 +138,8 @@ uv run --frozen pytest benchmark_query.py \
 
 Five rounds is a minimum, not an exact count. Query result conversion and printing stay inside the timed functions. Calibration is enabled and warmup is disabled.
 
+Every Neo4j, Kuzu, Ladybug and DuckPGQ query has a 10-second timeout; set `QUERY_TIMEOUT_SECONDS` to change it. A query that takes longer is treated as broken: it fails with `TimeoutError` instead of being timed, so one bad plan cannot stretch a run of at least five rounds into hours, and `results/compare.py` shows it as `timeout` in the table. The slowest query in the table below takes about one second. Neo4j applies the limit as a transaction timeout, Kuzu and Ladybug use `Connection.set_query_timeout`, and DuckPGQ cancels the query from a watchdog thread with DuckDB's `interrupt()`. lance-graph 0.5.4 can neither time out nor cancel a query, so it runs without a limit.
+
 ### Mean query latency
 
 Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean, so a value above 1 means the engine was faster than this Neo4j setup.
