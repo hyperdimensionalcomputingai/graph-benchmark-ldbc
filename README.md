@@ -15,6 +15,7 @@ The following systems are compared:
 - Ladybug
 - lance-graph
 - DuckPGQ (DuckDB with the SQL/PGQ community extension)
+- FalkorDB
 
 ## Setup
 
@@ -182,3 +183,9 @@ Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean,
 CLI outputs: [Neo4j 2026.09.0](results/neo4j-2026.09.0.txt), [Kuzu 0.11.3](results/kuzu-0.11.3.txt), [Ladybug 0.21.2](results/ladybug-0.21.2.txt), [lance-graph 0.5.4](results/lance-graph-0.5.4.txt), [DuckPGQ](results/duckpgq-1.5.6.txt).
 
 Previous results are in [`results/archived/`](results/archived/): Neo4j 2025.12.1, Kuzu 0.11.3 and lance-graph 0.5.4 from 2026-09-03, and Ladybug 0.21.1, 0.21.0, 0.20.4 and 0.20.2.
+
+### FalkorDB
+
+FalkorDB 6.0.2 was measured on **2026-10-10** on a different machine (AMD Ryzen 9 6900HS, 16 logical CPUs, 30 GiB RAM, Linux, Python 3.14.8), so it is not included in the table above. It runs the same 30 Cypher queries as Neo4j, unmodified, with ID indexes plus seven secondary range indexes similar to Ladybug's ART indexes. All 30 queries passed their assertions with the benchmark settings above. Apart from Q30 (75.2 s), every query averages under 10 ms. See the [FalkorDB README](falkordb/README.md#results) for details.
+
+[FalkorDB 6.0.2 CLI output](results/falkordb-6.0.2.txt) · [Raw benchmark JSON](results/falkordb-6.0.2.json)

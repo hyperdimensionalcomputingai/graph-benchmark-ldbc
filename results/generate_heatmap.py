@@ -15,7 +15,7 @@ UNIT_TO_MS = {
     "ns": 0.000001,
 }
 # Column order for the heatmap; unlisted engines go last, alphabetically.
-ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq"]
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb"]
 
 
 def engine_sort_key(system: str) -> tuple[int, str]:
@@ -86,6 +86,9 @@ def _find_result_files(results_dir: Path) -> list[Path]:
         if path.name in skip:
             continue
         if path.suffix in {".py", ".png"}:
+            continue
+        # FalkorDB was measured on different hardware than the other engines
+        if path.stem.startswith("falkordb"):
             continue
         files.append(path)
     return files

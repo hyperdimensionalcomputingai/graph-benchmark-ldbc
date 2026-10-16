@@ -16,7 +16,7 @@ UNIT_TO_MS = {
 ROUND_MS_DECIMALS = 1
 SPEEDUP_DECIMALS = 1
 # Column order for tables and plots; unlisted engines go last, alphabetically.
-ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq"]
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb"]
 
 
 def engine_sort_key(path: Path) -> tuple[int, str]:
@@ -140,7 +140,11 @@ def plot_results(
 
 def main() -> None:
     results_dir = Path(__file__).resolve().parent
-    files = sorted(results_dir.glob("*.txt"), key=engine_sort_key)
+    # FalkorDB was measured on different hardware than the other engines
+    files = sorted(
+        (path for path in results_dir.glob("*.txt") if not path.stem.startswith("falkordb")),
+        key=engine_sort_key,
+    )
     if not files:
         raise SystemExit("No .txt files found in results directory.")
 
