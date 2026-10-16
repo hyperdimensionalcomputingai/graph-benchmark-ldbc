@@ -179,13 +179,4 @@ Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean,
 
 CLI outputs: [Neo4j 2026.09.0](results/neo4j-2026.09.0.txt), [Kuzu 0.11.3](results/kuzu-0.11.3.txt), [Ladybug 0.21.2](results/ladybug-0.21.2.txt), [lance-graph 0.5.4](results/lance-graph-0.5.4.txt), [DuckPGQ](results/duckpgq-1.5.6.txt).
 
-### Observations
-
-- **Fastest engine per query:** DuckPGQ on 13 queries, Ladybug on 10, Neo4j on 5, and Kuzu and lance-graph on 1 each.
-- **Geometric mean of per-query latency ratios relative to Ladybug 0.21.2:** Neo4j 2.04×, lance-graph 1.83×, Kuzu 1.76×, DuckPGQ 0.85×. On that measure, DuckPGQ is about 1.18× faster than Ladybug and is faster on 18 of 30 queries.
-- **DuckPGQ** is strongest on the scan- and aggregation-heavy queries (Q7, Q20, Q30) and weaker on selective point lookups (Q2, Q4, Q16). This matches what the DuckPGQ contributor saw on an M5 Pro.
-- **Ladybug 0.21.1 → 0.21.2:** close to flat. The geometric-mean ratio is 1.03 (0.21.2 is faster on 8 of 30 queries). Q27 (3.49 → 4.50 ms) and Q28 (1.78 → 2.32 ms) moved the most.
-- **Neo4j 2025.12.1 → 2026.09.0:** the geometric-mean ratio is 1.05. Neo4j also moved from a 4-CPU/10 GiB Colima VM to Docker Desktop, so this delta mixes the version change with the deployment change.
-- **Kuzu and lance-graph** were rerun unchanged. They came in 1.14× and 1.07× slower than their September runs (geometric mean). Most of the gap is on sub-2 ms queries, which shows the run-to-run variance at this scale. Small differences between engines on such queries should be read with that in mind.
-
 Previous results are in [`results/archived/`](results/archived/): Neo4j 2025.12.1, Kuzu 0.11.3 and lance-graph 0.5.4 from 2026-09-03, and Ladybug 0.21.1, 0.21.0, 0.20.4 and 0.20.2.
