@@ -14,6 +14,16 @@ UNIT_TO_MS = {
     "µs": 0.001,
     "ns": 0.000001,
 }
+# Column order for the heatmap; unlisted engines go last, alphabetically.
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq"]
+
+
+def engine_sort_key(system: str) -> tuple[int, str]:
+    stem = system.lower()
+    for idx, engine in enumerate(ENGINE_ORDER):
+        if stem.startswith(engine):
+            return (idx, stem)
+    return (len(ENGINE_ORDER), stem)
 
 
 def normalize_name(name: str) -> str:
@@ -273,7 +283,7 @@ def main() -> None:
     if not parsed:
         raise SystemExit("No benchmark tables detected in results directory.")
 
-    systems = sorted(parsed.keys())
+    systems = sorted(parsed.keys(), key=engine_sort_key)
     all_queries = sorted(
         {q for results in parsed.values() for q in results.keys()},
         key=sort_query_key,

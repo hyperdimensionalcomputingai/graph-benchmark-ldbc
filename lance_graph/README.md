@@ -2,7 +2,7 @@
 
 This section describes how to build and query a graph of the social network data using [lance-graph](https://github.com/lance-format/lance-graph), built on top of the [Lance](https://lance.org/) format. The graph is stored as Lance datasets on disk, and lance-graph provides a Cypher engine that interprets those datasets via a GraphConfig mapping.
 
-All timing numbers shown below are on an M3 Macbook Pro with 32 GB of RAM.
+The sample output below is from an older run on an M3 MacBook Pro with 32 GB of RAM. For current numbers (Apple M5, 2026-10-16), see the [comparison table](../README.md#mean-query-latency).
 
 ## Setup
 

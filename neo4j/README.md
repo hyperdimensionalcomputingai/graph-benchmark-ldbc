@@ -2,7 +2,7 @@
 
 This section describes how to benchmark the social network data in Neo4j.
 
-All timing numbers shown below are on an M3 Macbook Pro with 32 GB of RAM.
+The sample output below is from an older run on an M3 MacBook Pro with 32 GB of RAM. For current numbers (Apple M5, 2026-10-16), see the [comparison table](../README.md#mean-query-latency).
 
 ## Setup
 
