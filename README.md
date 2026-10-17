@@ -182,4 +182,4 @@ Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean,
 
 ![](results/benchmark_heatmap.png)
 
-FalkorDB's Q30 shows as `timeout` because it exceeds the 10-second limit. Without the limit it averaged 75.2 s on an AMD Ryzen 9 6900HS: the planner pairs every person's comments with all of their posts (about 447M candidate pairs) before checking `replyOfPost`. See the [FalkorDB README](falkordb/README.md#results).
+FalkorDB's Q30 shows as `timeout` because it exceeds the 10-second limit. Without the limit it averaged 61.9 s over five rounds on the same M5 ([CLI output](results/archived/falkordb-6.0.2-q30-no-limit.txt)): the planner pairs every person's comments with all of their posts (about 447M candidate pairs) before checking `replyOfPost`. See the [FalkorDB README](falkordb/README.md#results).
