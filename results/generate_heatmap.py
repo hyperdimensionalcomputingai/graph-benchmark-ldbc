@@ -16,7 +16,7 @@ UNIT_TO_MS = {
     "ns": 0.000001,
 }
 # Column order for the heatmap; unlisted engines go last, alphabetically.
-ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb"]
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb", "lance-csr"]
 
 
 def engine_sort_key(system: str) -> tuple[int, str]:
