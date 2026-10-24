@@ -1,5 +1,7 @@
 # Ladybug
 
+**These are not LDBC Benchmark Results.** See the repository’s [benchmark status and provenance](../README.md#licensing-provenance-and-benchmark-status).
+
 This section describes how benchmark the social network data in [Ladybug](https://github.com/LadybugDB/ladybug), a fork of Kuzu.
 
 Latest measurements (2026-10-16) are on an Apple M5 MacBook Pro with 24 GiB RAM. See the [comparison table](../README.md#mean-query-latency) and the [0.21.2 benchmark output](../results/ladybug-0.21.2.txt).

@@ -1,7 +1,8 @@
 [project]
 name = "graph-benchmark"
 version = "0.1.0"
-description = "Graph benchmarks on an artificial dataset "
+description = "Custom graph queries over the LDBC SNB SF1 dataset"
+license = "MIT"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

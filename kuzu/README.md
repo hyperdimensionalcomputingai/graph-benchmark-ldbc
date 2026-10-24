@@ -1,5 +1,7 @@
 # Kuzu 
 
+**These are not LDBC Benchmark Results.** See the repository’s [benchmark status and provenance](../README.md#licensing-provenance-and-benchmark-status).
+
 This section describes how benchmark the social network data in Kuzu. It uses Kuzu's [client API](https://github.com/kuzudb/kuzu) to perform the ingestion and querying.
 
 The sample output below is from an older run on an M3 MacBook Pro with 32 GB of RAM. For current numbers (Apple M5, 2026-10-16), see the [comparison table](../README.md#mean-query-latency).
@@ -55,7 +57,7 @@ The benchmark can be run using the following command. The results are output to 
 ============================================== test session starts ===============================================
 platform darwin -- Python 3.13.7, pytest-9.0.2, pluggy-1.6.0
 benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=True min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=5)
-rootdir: /Users/prrao/code/graph-benchmark-ldbc-snb
+rootdir: /path/to/graph-benchmark-ldbc
 configfile: pyproject.toml
 plugins: anyio-4.12.1, benchmark-5.2.3, asyncio-1.3.0, Faker-40.1.2
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function

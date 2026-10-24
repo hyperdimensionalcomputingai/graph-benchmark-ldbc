@@ -103,6 +103,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -142,3 +144,15 @@ results/2026*
 # DuckDB / DuckPGQ
 *.duckdb
 *.duckdb.wal
+
+# Downloaded SNB data and temporary extraction
+social_network-*.tar.*
+/social_network-*/
+/_extract_tmp/
+.benchmarks/
+*.kuzu.wal
+*.lbdb.wal
+*.lbug.wal
+# Local credentials
+*.pem
+*.key
