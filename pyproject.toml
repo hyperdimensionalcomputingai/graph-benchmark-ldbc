@@ -2,7 +2,8 @@
 name = "graph-benchmark"
 version = "0.1.0"
 description = "Custom graph queries over the LDBC SNB SF1 dataset"
-license = "MIT"
+license = "Apache-2.0 AND MIT"
+license-files = ["LICENSE", "LICENSES/MIT.txt", "THIRD_PARTY_NOTICES.md"]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
