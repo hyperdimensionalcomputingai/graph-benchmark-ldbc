@@ -1,13 +1,16 @@
 # Graph benchmarks: LDBC SNB SF1
 
-This repo contains a custom graph benchmark using the LDBC Social Network Benchmark (SNB) dataset with a scale factor of 1 (SF1). The dataset is downloaded from [the official source](https://ldbcouncil.org/benchmarks/snb/datasets/). This project complies with [LDBC's fair use policies](https://ldbcouncil.org/benchmarks/fair-use-policies/).
+This repository compares graph systems using 30 custom queries over the LDBC Social Network Benchmark (SNB) SF1 dataset. The queries explore n-hop traversals with different cardinalities, filters and projections.
 
-LDBC's policy calls for attribution in accordance with the [Creative Commons Attribution 4.0 International (CC BY 4.0) license](https://creativecommons.org/licenses/by/4.0/). We credit LDBC/GDC for the SNB dataset and data model used here. This repository's original code and custom queries are licensed under [MIT](LICENSE); LDBC materials retain their applicable upstream licenses and are not relicensed under MIT.
+## Licensing, provenance and benchmark status
 
-The aim of this benchmark is to study and compare the performance of graph systems on an established benchmark dataset. The queries suite run consists of 30 queries that touch various nodes via n-hop path traversals, with very different cardinalities, filters and projections applied to get a more holistic understanding of query performance.
+The harness and custom queries are available under the existing [MIT licence](LICENSE), which retains Prashanth Rao's copyright notice. The project includes contributions from multiple authors; moving it to HDC Labs does not transfer their copyright. See [third-party provenance and review gaps](THIRD_PARTY_NOTICES.md).
 
-> [!NOTE]
-> The query workload was created specifically for this benchmark and is not officially endorsed by LDBC, now known as the Graph Data Council (GDC). This is not an exact re-implementation of an LDBC Benchmark, and the results reported here are not "official" LDBC Benchmark Results.
+The SNB dataset and data model originate with the Linked Data Benchmark Council (LDBC), now the Graph Data Council (GDC). Dataset files are downloaded from the [official source](https://ldbcouncil.org/benchmarks/snb/datasets/), rather than distributed in this repository. Their original rights and distribution conditions remain applicable; the repository's MIT licence does not cover them. The Fair Use Policy is not an artefact-specific dataset licence.
+
+The 30 queries form a custom workload, not the official LDBC SNB workload. This project has not been audited, approved or endorsed by GDC.
+
+**These are not LDBC Benchmark Results.** See the [GDC Fair Use Policy](https://ldbcouncil.org/benchmarks/fair-use-policies/).
 
 The following systems are compared:
 - Neo4j
@@ -23,25 +26,25 @@ We use [uv](https://docs.astral.sh/uv/getting-started/installation/) to manage t
 
 ```sh
 # Sync the dependencies locally
-uv sync
+uv sync --locked
 ```
 All the dependencies are listed in `pyproject.toml`.
 
 ## Dataset
 
-Download the LDBC dataset locally by running the given Python script `download_dataset.py`
+Download the SNB Interactive v1 initial SF1 dataset (`CsvBasic`, `StringDateFormatter`) with `download_dataset.py`. Install `curl`, `tar` and either `zstd` or `unzstd` first. The script extracts the archive into `csv/` and skips downloading if that directory already exists. It prints a SHA-256 hash, but no upstream expected checksum is configured; this is not an integrity verification against a published digest.
 
 ```bash
 uv run download_dataset.py
 ```
 
-Alternatively, navigate to the [LDBC site](https://ldbcouncil.org/benchmarks/snb/datasets/) and manually download and unzip the dataset from [this URL](https://datasets.ldbcouncil.org/snb-interactive-v1/social_network-sf1-CsvComposite-StringDateFormatter.tar.zst).
+Alternatively, navigate to the [LDBC site](https://ldbcouncil.org/benchmarks/snb/datasets/) and manually download and unzip the dataset from [this URL](https://datasets.ldbcouncil.org/snb-interactive-v1/social_network-sf1-CsvBasic-StringDateFormatter.tar.zst).
 
 The schema of the LDBC SNB graph is shown below. There are 8 node types and 23 relationship types in the graph.
 
 ![](assets/ldbc-snb-schema.png)
 
-The individual and total number of nodes and relationships in the graph asre shown below.
+The individual and total number of nodes and relationships in the graph are shown below.
 
 ```
 Node counts:
@@ -99,6 +102,8 @@ Navigate to each directory and see the `query.py` files for
 each of the 30 queries run in the benchmark.
 
 ## High-level results
+
+**These are not LDBC Benchmark Results.** These independent, unaudited measurements apply to the configurations below.
 
 All six engines were measured on **2026-10-16** on the same machine. The first five ran back to back, and FalkorDB ran later the same day:
 

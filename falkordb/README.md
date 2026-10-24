@@ -1,5 +1,7 @@
 # FalkorDB
 
+**These are not LDBC Benchmark Results.** See the repository’s [benchmark status and provenance](../README.md#licensing-provenance-and-benchmark-status).
+
 This section describes how to benchmark the social network data in [FalkorDB](https://github.com/FalkorDB/FalkorDB), a graph database built as a Redis module. Version 6.0 replaced the 4.x C engine with a new engine written in Rust; the commands and Cypher are unchanged.
 
 ## Setup

@@ -1,5 +1,7 @@
 # DuckPGQ
 
+**These are not LDBC Benchmark Results.** See the repository’s [benchmark status and provenance](../README.md#licensing-provenance-and-benchmark-status).
+
 This section describes how to benchmark the LDBC SNB SF1 data in [DuckDB](https://duckdb.org/) using the [DuckPGQ](https://duckpgq.org/) community extension. DuckPGQ adds SQL/PGQ (the graph query extension of the SQL:2023 standard) to DuckDB: the graph is declared as a *property graph* over regular DuckDB tables and queried with `GRAPH_TABLE (... MATCH ...)` clauses embedded in SQL.
 
 The scripts target DuckDB 1.5.6 (the `duckdb` wheel from PyPI, pinned in `pyproject.toml`) with the DuckPGQ community extension published for that release.
