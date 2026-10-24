@@ -16,7 +16,7 @@ UNIT_TO_MS = {
 ROUND_MS_DECIMALS = 1
 SPEEDUP_DECIMALS = 1
 # Column order for tables and plots; unlisted engines go last, alphabetically.
-ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb"]
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb", "lance-csr"]
 
 
 def engine_sort_key(path: Path) -> tuple[int, str]:
