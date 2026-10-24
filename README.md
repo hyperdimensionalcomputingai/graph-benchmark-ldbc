@@ -4,9 +4,11 @@ This repository compares graph systems using 30 custom queries over the LDBC Soc
 
 ## Licensing, provenance and benchmark status
 
-The harness and custom queries are available under the existing [MIT licence](LICENSE), which retains Prashanth Rao's copyright notice. The project includes contributions from multiple authors; moving it to HDC Labs does not transfer their copyright. See [third-party provenance and review gaps](THIRD_PARTY_NOTICES.md).
+The project is maintained by [HDC Labs](https://github.com/hyperdimensionalcomputingai/graph-benchmark-ldbc) and adopts [Apache License 2.0](LICENSE) for this derivative and future contributions. Inherited MIT-covered code and documentation from pre-change commit [`d7d56b2`](https://github.com/hyperdimensionalcomputingai/graph-benchmark-ldbc/tree/d7d56b29b39fdc4304639aed6bad2d465ba95488) retain their original MIT grant and the complete [MIT licence and copyright notice](LICENSES/MIT.txt).
 
-The SNB dataset and data model originate with the Linked Data Benchmark Council (LDBC), now the Graph Data Council (GDC). Dataset files are downloaded from the [official source](https://ldbcouncil.org/benchmarks/snb/datasets/), rather than distributed in this repository. Their original rights and distribution conditions remain applicable; the repository's MIT licence does not cover them. The Fair Use Policy is not an artefact-specific dataset licence.
+The software distribution is described by `Apache-2.0 AND MIT`: Apache terms apply to the derivative, and MIT notices must be preserved for inherited portions. This is not a choice of either licence for the whole distribution. Earlier MIT releases remain MIT; this change does not replace earlier contributors' grants or imply that they newly grant Apache's explicit patent rights. The organization transfer does not assign copyright. See [third-party provenance and review gaps](THIRD_PARTY_NOTICES.md) and [contribution guidance](CONTRIBUTING.md).
+
+The SNB dataset and data model originate with the Linked Data Benchmark Council (LDBC), now the Graph Data Council (GDC). Dataset files are downloaded from the [official source](https://ldbcouncil.org/benchmarks/snb/datasets/), rather than distributed in this repository. Their original rights and distribution conditions remain applicable; the repository's code licences do not cover them. The Fair Use Policy is not an artefact-specific dataset licence. The two images under `assets/` also have unresolved provenance and are not represented as Apache- or MIT-licensed by this change; see the specific review questions in the notices.
 
 The 30 queries form a custom workload, not the official LDBC SNB workload. This project has not been audited, approved or endorsed by GDC.
 
