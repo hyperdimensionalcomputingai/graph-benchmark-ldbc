@@ -34,7 +34,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "lance-csr", specifier = "==0.2.0" },
+    { name = "lance-csr", specifier = "==0.3.1" },
     { name = "polars", specifier = "==1.37.1" },
     { name = "pyarrow", specifier = "==23.0.0" },
     { name = "pytest", specifier = ">=9.0.2" },
@@ -52,16 +52,16 @@ wheels = [
 
 [[package]]
 name = "lance-csr"
-version = "0.2.0"
+version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyarrow" },
     { name = "pylance" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f9/61/476ef83a1155efb4554252d90c49af2d303db02311975772834601e2fd2e/lance_csr-0.2.0.tar.gz", hash = "sha256:2409b48bad9fccad176fc2570c25ac59ffe05634bd349aa3994285ac616ec9af", size = 291611, upload-time = "2026-10-24T17:19:01.425Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/62/3d/b08698f76db0f3842b6782a773e2f5001fd11f3b3a548d1c2401285bfa28/lance_csr-0.3.1.tar.gz", hash = "sha256:c4b1e2b24434181a1c1ef0a2436ece3292e7c41b83af22705e9cb28582491139", size = 377368, upload-time = "2026-10-26T22:03:13.763Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/46/cc17f6c67197783d9a158bdae905b605a229c5128130379026f0a5be7122/lance_csr-0.2.0-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:b56d280548c995fd10a798992491a2a181cb3eb2ae7ce6a0e1733f45da542868", size = 57749071, upload-time = "2026-10-24T17:18:54.972Z" },
-    { url = "https://files.pythonhosted.org/packages/48/9c/1685bd353828ed9136848f5dc5530d952ef973b1437c37260622cb00f39c/lance_csr-0.2.0-cp312-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:f8530e8b5118e96c65dcbcc778663bbec5ea5815a6312eb6474c2b2e706bc3a1", size = 65096738, upload-time = "2026-10-24T17:18:58.92Z" },
+    { url = "https://files.pythonhosted.org/packages/15/95/8eaa71e3a3cbab7a3dddeaf37250da783a093b6f3dfb8c83ffae0f431d26/lance_csr-0.3.1-cp312-abi3-macosx_11_0_arm64.whl", hash = "sha256:5c5b0060ecd81fc5832a994f179a53ae2876a4f6730ac5a9edc077bb69ed73f6", size = 58388379, upload-time = "2026-10-26T22:03:04.265Z" },
+    { url = "https://files.pythonhosted.org/packages/9a/e7/3a70facacd665f635c86bedee72c5e185993c5469725a373f9311e8c4b3b/lance_csr-0.3.1-cp312-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:71d90e097069d5b344c1b3c27871108c4414b5c6ba7663b6bdd1a4b1775f414c", size = 65787618, upload-time = "2026-10-26T22:03:10.951Z" },
 ]
 
 [[package]]

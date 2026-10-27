@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "lance-csr runs of the lance-graph query suite"
 requires-python = ">=3.13"
 dependencies = [
-    "lance-csr==0.2.0",
+    "lance-csr==0.3.1",
     "polars==1.37.1",
     "pyarrow==23.0.0",
     "pytest>=9.0.2",
