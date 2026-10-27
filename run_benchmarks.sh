@@ -10,6 +10,8 @@ cd "$(dirname "$0")"
   echo "date: $(date -u +%F)"
   echo "machine: $(sysctl -n machdep.cpu.brand_string 2>/dev/null || uname -m), $(( $(sysctl -n hw.memsize 2>/dev/null || echo 0) / 1073741824 )) GB"
   echo "os: $(sw_vers -productName 2>/dev/null || uname -s) $(sw_vers -productVersion 2>/dev/null || uname -r)"
+  # Battery power can throttle the CPU, so record the power source (macOS only).
+  pmset -g batt 2>/dev/null | head -1 | sed -n "s/.*'\(.*\)'.*/power: \1/p"
 } > results/environment.yml
 FLAGS=(
   --benchmark-min-rounds=5
@@ -29,8 +31,8 @@ RUNS=(
   "lance_graph lance-graph-0.5.4"
   "duckpgq duckpgq-1.5.6"
   "falkordb falkordb-6.0.2"
-  "lance_csr lance-csr-0.2.0-memory memory"
-  "lance_csr lance-csr-0.2.0-lazy lazy"
+  "lance_csr lance-csr-0.3.1-memory memory"
+  "lance_csr lance-csr-0.3.1-lazy lazy"
 )
 for run in "${RUNS[@]}"; do
   read -r dir name mode <<< "$run"

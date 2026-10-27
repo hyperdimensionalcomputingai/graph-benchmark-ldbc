@@ -108,7 +108,7 @@ each of the 30 queries run in the benchmark.
 
 **These are not LDBC Benchmark Results.** These independent, unaudited measurements apply to the configurations below.
 
-Neo4j, Kuzu, Ladybug, lance-graph and lance-csr were measured back to back on **2026-10-24** with `./run_benchmarks.sh` ([`results/environment.yml`](results/environment.yml)). DuckPGQ and FalkorDB results are from the earlier run on **2026-10-16**, on the same machine:
+Neo4j, Kuzu, Ladybug and lance-graph were measured back to back on **2026-10-24** with `./run_benchmarks.sh`. lance-csr 0.3.1 was re-run on its own with `./run_benchmarks.sh lance_csr` on **2026-10-27** ([`results/environment.yml`](results/environment.yml)). DuckPGQ and FalkorDB results are from the earlier run on **2026-10-16**. All runs used the same machine:
 
 | | |
 | --- | --- |
@@ -125,7 +125,7 @@ Engine versions:
 - **Kuzu 0.11.3** (unchanged)
 - **Ladybug 0.21.2** (previously 0.21.1). All 30 queries use plain `conn.execute(query)`; `ANALYZE`, result cleanup and the six ART secondary indexes remain enabled
 - **lance-graph 0.5.4** (unchanged)
-- **lance-csr 0.2.0**, new in this run, a fork of lance-graph with a CSR adjacency index, running lance-graph's 30 queries over the same Lance datasets in two modes: tables in memory, and Lance datasets read lazily from disk. See the [lance-csr README](lance_csr/README.md)
+- **lance-csr 0.3.1** (previously 0.2.0), a fork of lance-graph with a CSR adjacency index, running lance-graph's 30 queries over the same Lance datasets in two modes: tables in memory, and Lance datasets read lazily from disk. See the [lance-csr README](lance_csr/README.md)
 - **DuckPGQ** on DuckDB 1.5.6 (extension build `61f5d082`), new in this run, with the six ART indexes that mirror Ladybug's
 - **FalkorDB 6.0.2**, new in this run, running Neo4j's 30 Cypher queries unmodified, with ID indexes plus seven secondary range indexes similar to Ladybug's ART indexes
 
@@ -152,44 +152,44 @@ uv run --frozen pytest benchmark_query.py \
 
 Five rounds is a minimum, not an exact count. Query result conversion and printing stay inside the timed functions. Calibration is enabled and warmup is disabled.
 
-Every Neo4j, Kuzu, Ladybug, DuckPGQ and FalkorDB query has a 10-second timeout; set `QUERY_TIMEOUT_SECONDS` to change it. A query that takes longer is treated as broken: it fails with `TimeoutError` instead of being timed, so one bad plan cannot stretch a run of at least five rounds into hours, and `results/compare.py` shows it as `timeout` in the table. The slowest query in the table below takes about one second. Neo4j applies the limit as a transaction timeout, Kuzu and Ladybug use `Connection.set_query_timeout`, DuckPGQ cancels the query from a watchdog thread with DuckDB's `interrupt()`, and FalkorDB passes a per-query `timeout` to `GRAPH.RO_QUERY`. lance-graph 0.5.4 and lance-csr 0.2.0 can neither time out nor cancel a query, so they run without a limit.
+Every Neo4j, Kuzu, Ladybug, DuckPGQ and FalkorDB query has a 10-second timeout; set `QUERY_TIMEOUT_SECONDS` to change it. A query that takes longer is treated as broken: it fails with `TimeoutError` instead of being timed, so one bad plan cannot stretch a run of at least five rounds into hours, and `results/compare.py` shows it as `timeout` in the table. The slowest query in the table below takes about one second. Neo4j applies the limit as a transaction timeout, Kuzu and Ladybug use `Connection.set_query_timeout`, DuckPGQ cancels the query from a watchdog thread with DuckDB's `interrupt()`, and FalkorDB passes a per-query `timeout` to `GRAPH.RO_QUERY`. lance-graph 0.5.4 can neither time out nor cancel a query, and the lance-csr runner doesn't set lance-csr's `timeout`, so both run without a limit.
 
 ### Mean query latency
 
 Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean, so a value above 1 means the engine was faster than this Neo4j setup.
 
-| Query | neo4j-2026.09.0 (ms) | kuzu-0.11.3 (ms) | ladybug-0.21.2 (ms) | lance-graph-0.5.4 (ms) | duckpgq-1.5.6 (ms) | falkordb-6.0.2 (ms) | lance-csr-0.2.0-lazy (ms) | lance-csr-0.2.0-memory (ms) |
+| Query | neo4j-2026.09.0 (ms) | kuzu-0.11.3 (ms) | ladybug-0.21.2 (ms) | lance-graph-0.5.4 (ms) | duckpgq-1.5.6 (ms) | falkordb-6.0.2 (ms) | lance-csr-0.3.1-lazy (ms) | lance-csr-0.3.1-memory (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| q1 | 1.277 | 1.734 (0.74x) | 1.218 (1.05x) | 1.297 (0.98x) | 0.978 (1.31x) | 0.440 (2.90x) | 1.176 (1.09x) | 0.741 (1.72x) |
-| q2 | 3.260 | 1.322 (2.47x) | 1.123 (2.90x) | 2.337 (1.39x) | 3.450 (0.94x) | 4.682 (0.70x) | 1.414 (2.31x) | 0.582 (5.60x) |
-| q3 | 0.665 | 1.034 (0.64x) | 0.789 (0.84x) | 1.862 (0.36x) | 1.120 (0.59x) | 4.420 (0.15x) | 0.826 (0.81x) | 0.689 (0.97x) |
-| q4 | 2.656 | 0.848 (3.13x) | 0.393 (6.75x) | 2.982 (0.89x) | 1.545 (1.72x) | 0.215 (12.35x) | 0.826 (3.22x) | 0.536 (4.95x) |
-| q5 | 2.785 | 3.440 (0.81x) | 4.004 (0.70x) | 2.044 (1.36x) | 2.014 (1.38x) | 1.211 (2.30x) | 2.237 (1.24x) | 0.822 (3.39x) |
-| q6 | 2.597 | 0.664 (3.91x) | 0.787 (3.30x) | 0.727 (3.57x) | 0.554 (4.69x) | 0.193 (13.44x) | 0.747 (3.48x) | 0.466 (5.57x) |
-| q7 | 0.430 | 27.735 (0.02x) | 25.112 (0.02x) | 15.677 (0.03x) | 2.666 (0.16x) | 0.649 (0.66x) | 1.126 (0.38x) | 1.085 (0.40x) |
-| q8 | 7.287 | 2.723 (2.68x) | 3.375 (2.16x) | 1.141 (6.39x) | 1.825 (3.99x) | 1.801 (4.05x) | 1.824 (4.00x) | 0.685 (10.64x) |
-| q9 | 0.758 | 1.728 (0.44x) | 1.342 (0.56x) | 1.888 (0.40x) | 1.158 (0.65x) | 0.235 (3.23x) | 1.375 (0.55x) | 0.856 (0.89x) |
-| q10 | 3.788 | 1.553 (2.44x) | 1.778 (2.13x) | 26.693 (0.14x) | 2.728 (1.39x) | 0.201 (18.84x) | 0.980 (3.86x) | 0.773 (4.90x) |
-| q11 | 10.282 | 7.960 (1.29x) | 4.635 (2.22x) | 3.084 (3.33x) | 2.690 (3.82x) | 6.742 (1.53x) | 1.986 (5.18x) | 1.587 (6.48x) |
-| q12 | 2.549 | 17.156 (0.15x) | 7.840 (0.33x) | 18.684 (0.14x) | 4.340 (0.59x) | 1.125 (2.27x) | 7.771 (0.33x) | 0.835 (3.05x) |
-| q13 | 6.654 | 42.661 (0.16x) | 5.837 (1.14x) | 9.616 (0.69x) | 3.382 (1.97x) | 2.522 (2.64x) | 1.056 (6.30x) | 0.795 (8.37x) |
-| q14 | 0.460 | 1.556 (0.30x) | 0.902 (0.51x) | 2.909 (0.16x) | 1.439 (0.32x) | 0.204 (2.26x) | 0.695 (0.66x) | 0.554 (0.83x) |
-| q15 | 2.369 | 2.379 (1.00x) | 1.164 (2.04x) | 3.023 (0.78x) | 1.295 (1.83x) | 0.226 (10.49x) | 0.782 (3.03x) | 0.562 (4.22x) |
-| q16 | 1.260 | 1.775 (0.71x) | 1.036 (1.22x) | 4.329 (0.29x) | 3.400 (0.37x) | 4.415 (0.29x) | 1.159 (1.09x) | 0.702 (1.79x) |
-| q17 | 3.086 | 2.616 (1.18x) | 1.738 (1.78x) | 2.301 (1.34x) | 1.365 (2.26x) | 1.199 (2.57x) | 1.444 (2.14x) | 0.977 (3.16x) |
-| q18 | 3.108 | 1.508 (2.06x) | 1.221 (2.55x) | 1.763 (1.76x) | 1.047 (2.97x) | 0.628 (4.95x) | 1.167 (2.66x) | 0.702 (4.43x) |
-| q19 | 4.856 | 11.657 (0.42x) | 3.433 (1.41x) | 19.927 (0.24x) | 4.327 (1.12x) | 2.129 (2.28x) | 1.612 (3.01x) | 0.981 (4.95x) |
-| q20 | 421.921 | 13.247 (31.85x) | 14.154 (29.81x) | 3.132 (134.71x) | 0.956 (441.15x) | 0.455 (926.79x) | 19.591 (21.54x) | 2.115 (199.47x) |
-| q21 | 0.511 | 0.441 (1.16x) | 0.500 (1.02x) | 1.459 (0.35x) | 0.662 (0.77x) | 0.346 (1.48x) | 0.937 (0.55x) | 0.770 (0.66x) |
-| q22 | 2.657 | 23.338 (0.11x) | 7.456 (0.36x) | 13.413 (0.20x) | 5.143 (0.52x) | 0.670 (3.97x) | 0.930 (2.86x) | 0.710 (3.74x) |
-| q23 | 3.133 | 1.187 (2.64x) | 0.791 (3.96x) | 2.419 (1.30x) | 1.131 (2.77x) | 0.299 (10.49x) | 1.224 (2.56x) | 0.736 (4.26x) |
-| q24 | 0.717 | 1.233 (0.58x) | 0.812 (0.88x) | 1.754 (0.41x) | 0.705 (1.02x) | 0.201 (3.56x) | 1.069 (0.67x) | 0.689 (1.04x) |
-| q25 | 2.858 | 1.453 (1.97x) | 1.269 (2.25x) | 1.468 (1.95x) | 0.850 (3.36x) | 0.175 (16.30x) | 1.242 (2.30x) | 0.797 (3.59x) |
-| q26 | 0.649 | 3.372 (0.19x) | 1.147 (0.57x) | 2.932 (0.22x) | 1.489 (0.44x) | 0.299 (2.17x) | 1.099 (0.59x) | 0.755 (0.86x) |
-| q27 | 2.219 | 17.960 (0.12x) | 3.708 (0.60x) | 24.840 (0.09x) | 2.881 (0.77x) | 0.767 (2.89x) | 1.331 (1.67x) | 0.870 (2.55x) |
-| q28 | 2.369 | 1.513 (1.57x) | 1.776 (1.33x) | 2.498 (0.95x) | 1.171 (2.02x) | 4.895 (0.48x) | 2.315 (1.02x) | 1.393 (1.70x) |
-| q29 | 2.621 | 1.022 (2.56x) | 0.718 (3.65x) | 2.963 (0.88x) | 1.231 (2.13x) | 4.379 (0.60x) | 1.032 (2.54x) | 0.688 (3.81x) |
-| q30 | 1,359.978 | 146.520 (9.28x) | 97.766 (13.91x) | 34.313 (39.63x) | 26.809 (50.73x) | timeout | 39.697 (34.26x) | 35.361 (38.46x) |
+| q1 | 1.277 | 1.734 (0.74x) | 1.218 (1.05x) | 1.297 (0.98x) | 0.978 (1.31x) | 0.440 (2.90x) | 1.128 (1.13x) | 0.656 (1.95x) |
+| q2 | 3.260 | 1.322 (2.47x) | 1.123 (2.90x) | 2.337 (1.39x) | 3.450 (0.94x) | 4.682 (0.70x) | 1.331 (2.45x) | 0.512 (6.37x) |
+| q3 | 0.665 | 1.034 (0.64x) | 0.789 (0.84x) | 1.862 (0.36x) | 1.120 (0.59x) | 4.420 (0.15x) | 0.773 (0.86x) | 0.616 (1.08x) |
+| q4 | 2.656 | 0.848 (3.13x) | 0.393 (6.75x) | 2.982 (0.89x) | 1.545 (1.72x) | 0.215 (12.35x) | 0.751 (3.54x) | 0.481 (5.52x) |
+| q5 | 2.785 | 3.440 (0.81x) | 4.004 (0.70x) | 2.044 (1.36x) | 2.014 (1.38x) | 1.211 (2.30x) | 2.229 (1.25x) | 0.771 (3.61x) |
+| q6 | 2.597 | 0.664 (3.91x) | 0.787 (3.30x) | 0.727 (3.57x) | 0.554 (4.69x) | 0.193 (13.44x) | 0.710 (3.66x) | 0.413 (6.29x) |
+| q7 | 0.430 | 27.735 (0.02x) | 25.112 (0.02x) | 15.677 (0.03x) | 2.666 (0.16x) | 0.649 (0.66x) | 1.053 (0.41x) | 0.982 (0.44x) |
+| q8 | 7.287 | 2.723 (2.68x) | 3.375 (2.16x) | 1.141 (6.39x) | 1.825 (3.99x) | 1.801 (4.05x) | 1.753 (4.16x) | 0.613 (11.90x) |
+| q9 | 0.758 | 1.728 (0.44x) | 1.342 (0.56x) | 1.888 (0.40x) | 1.158 (0.65x) | 0.235 (3.23x) | 1.319 (0.57x) | 0.809 (0.94x) |
+| q10 | 3.788 | 1.553 (2.44x) | 1.778 (2.13x) | 26.693 (0.14x) | 2.728 (1.39x) | 0.201 (18.84x) | 0.908 (4.17x) | 0.700 (5.41x) |
+| q11 | 10.282 | 7.960 (1.29x) | 4.635 (2.22x) | 3.084 (3.33x) | 2.690 (3.82x) | 6.742 (1.53x) | 1.893 (5.43x) | 1.466 (7.01x) |
+| q12 | 2.549 | 17.156 (0.15x) | 7.840 (0.33x) | 18.684 (0.14x) | 4.340 (0.59x) | 1.125 (2.27x) | 6.801 (0.37x) | 0.693 (3.68x) |
+| q13 | 6.654 | 42.661 (0.16x) | 5.837 (1.14x) | 9.616 (0.69x) | 3.382 (1.97x) | 2.522 (2.64x) | 0.995 (6.69x) | 0.736 (9.04x) |
+| q14 | 0.460 | 1.556 (0.30x) | 0.902 (0.51x) | 2.909 (0.16x) | 1.439 (0.32x) | 0.204 (2.26x) | 0.654 (0.70x) | 0.477 (0.96x) |
+| q15 | 2.369 | 2.379 (1.00x) | 1.164 (2.04x) | 3.023 (0.78x) | 1.295 (1.83x) | 0.226 (10.49x) | 0.703 (3.37x) | 0.505 (4.69x) |
+| q16 | 1.260 | 1.775 (0.71x) | 1.036 (1.22x) | 4.329 (0.29x) | 3.400 (0.37x) | 4.415 (0.29x) | 1.056 (1.19x) | 0.624 (2.02x) |
+| q17 | 3.086 | 2.616 (1.18x) | 1.738 (1.78x) | 2.301 (1.34x) | 1.365 (2.26x) | 1.199 (2.57x) | 1.369 (2.25x) | 0.869 (3.55x) |
+| q18 | 3.108 | 1.508 (2.06x) | 1.221 (2.55x) | 1.763 (1.76x) | 1.047 (2.97x) | 0.628 (4.95x) | 1.074 (2.89x) | 0.631 (4.93x) |
+| q19 | 4.856 | 11.657 (0.42x) | 3.433 (1.41x) | 19.927 (0.24x) | 4.327 (1.12x) | 2.129 (2.28x) | 1.332 (3.65x) | 0.900 (5.40x) |
+| q20 | 421.921 | 13.247 (31.85x) | 14.154 (29.81x) | 3.132 (134.71x) | 0.956 (441.15x) | 0.455 (926.79x) | 16.448 (25.65x) | 2.047 (206.08x) |
+| q21 | 0.511 | 0.441 (1.16x) | 0.500 (1.02x) | 1.459 (0.35x) | 0.662 (0.77x) | 0.346 (1.48x) | 0.788 (0.65x) | 0.700 (0.73x) |
+| q22 | 2.657 | 23.338 (0.11x) | 7.456 (0.36x) | 13.413 (0.20x) | 5.143 (0.52x) | 0.670 (3.97x) | 0.884 (3.01x) | 0.647 (4.11x) |
+| q23 | 3.133 | 1.187 (2.64x) | 0.791 (3.96x) | 2.419 (1.30x) | 1.131 (2.77x) | 0.299 (10.49x) | 1.175 (2.67x) | 0.662 (4.73x) |
+| q24 | 0.717 | 1.233 (0.58x) | 0.812 (0.88x) | 1.754 (0.41x) | 0.705 (1.02x) | 0.201 (3.56x) | 1.001 (0.72x) | 0.627 (1.14x) |
+| q25 | 2.858 | 1.453 (1.97x) | 1.269 (2.25x) | 1.468 (1.95x) | 0.850 (3.36x) | 0.175 (16.30x) | 1.127 (2.54x) | 0.719 (3.98x) |
+| q26 | 0.649 | 3.372 (0.19x) | 1.147 (0.57x) | 2.932 (0.22x) | 1.489 (0.44x) | 0.299 (2.17x) | 1.019 (0.64x) | 0.665 (0.98x) |
+| q27 | 2.219 | 17.960 (0.12x) | 3.708 (0.60x) | 24.840 (0.09x) | 2.881 (0.77x) | 0.767 (2.89x) | 1.236 (1.79x) | 0.801 (2.77x) |
+| q28 | 2.369 | 1.513 (1.57x) | 1.776 (1.33x) | 2.498 (0.95x) | 1.171 (2.02x) | 4.895 (0.48x) | 2.246 (1.05x) | 1.359 (1.74x) |
+| q29 | 2.621 | 1.022 (2.56x) | 0.718 (3.65x) | 2.963 (0.88x) | 1.231 (2.13x) | 4.379 (0.60x) | 0.967 (2.71x) | 0.616 (4.25x) |
+| q30 | 1,359.978 | 146.520 (9.28x) | 97.766 (13.91x) | 34.313 (39.63x) | 26.809 (50.73x) | timeout | 47.496 (28.63x) | 43.670 (31.14x) |
 
 ![](results/benchmark_heatmap.png)
 

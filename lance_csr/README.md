@@ -6,7 +6,7 @@ This directory has no queries or data of its own. `query.py` loads [`../lance_gr
 
 ## Setup
 
-lance-csr is embedded: it runs inside the Python process, with no server. This directory is its own uv project, because lance-csr 0.2.0 needs pylance 13 while the root project's lance-graph 0.5.4 uses pylance 1.0.4. Build the Lance datasets first (see [lance-graph](../lance_graph/README.md)), then install:
+lance-csr is embedded: it runs inside the Python process, with no server. This directory is its own uv project, because lance-csr 0.3.1 needs pylance 13 while the root project's lance-graph 0.5.4 uses pylance 1.0.4. Build the Lance datasets first (see [lance-graph](../lance_graph/README.md)), then install:
 
 ```sh
 uv sync --frozen
@@ -35,4 +35,4 @@ From the repository root, `./run_benchmarks.sh lance_csr` runs both modes with t
 LANCE_CSR_MODE=memory uv run --frozen pytest benchmark_query.py --benchmark-min-rounds=5 --benchmark-disable-gc
 ```
 
-lance-csr has no query timeout, so `QUERY_TIMEOUT_SECONDS` doesn't apply. The shared lance-graph query module uses the deprecated `with_node_label` and `with_relationship` builder methods, so each run prints deprecation warnings.
+The runner doesn't pass lance-csr's `timeout` argument, so `QUERY_TIMEOUT_SECONDS` doesn't apply and queries run without a limit. The shared lance-graph query module uses the deprecated `with_node_label` and `with_relationship` builder methods, so each run prints deprecation warnings.
