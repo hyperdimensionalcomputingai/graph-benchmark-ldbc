@@ -35,4 +35,4 @@ From the repository root, `./run_benchmarks.sh lance_csr` runs both modes with t
 LANCE_CSR_MODE=memory uv run --frozen pytest benchmark_query.py --benchmark-min-rounds=5 --benchmark-disable-gc
 ```
 
-The runner doesn't pass lance-csr's `timeout` argument, so `QUERY_TIMEOUT_SECONDS` doesn't apply and queries run without a limit. The shared lance-graph query module uses the deprecated `with_node_label` and `with_relationship` builder methods, so each run prints deprecation warnings.
+The runner doesn't pass lance-csr's `timeout` argument, so `QUERY_TIMEOUT_SECONDS` doesn't apply and queries run without a limit. `query.py` replaces the shared module's `build_config()`, which uses lance-graph's builder methods, with one that uses lance-csr's `node_table` and `rel_table`. It reads each relationship's endpoint node tables from its dataset name (`person_likes_post` goes from `Person` to `Post`).

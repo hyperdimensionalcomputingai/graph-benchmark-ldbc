@@ -1,7 +1,8 @@
 """Run lance_graph/query.py's 30 queries on lance-csr.
 
-The queries, graph mapping and data (lance_graph/graph_lance) are shared with lance-graph, so both
-engines answer identical Cypher over identical Lance datasets.
+The queries and data (lance_graph/graph_lance) are shared with lance-graph, so both engines answer
+identical Cypher over identical Lance datasets. The graph mapping is the same, but built with
+lance-csr's node_table and rel_table, which also name each relationship's endpoint node tables.
 
 LANCE_CSR_MODE picks how the datasets are read; both use CSR traversal (use_csr=True):
 - memory (default): every table loaded into memory as Arrow, as lance-graph's benchmark does
@@ -29,6 +30,22 @@ q = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(q)
 
 q.CypherEngine = functools.partial(lance_csr.CypherEngine, use_csr=True)
+
+
+def build_config() -> lance_csr.GraphConfig:
+    # lance-csr's rel_table names the node tables at both ends; read them from the dataset names,
+    # such as person_likes_post for Person to Post.
+    labels = {label.lower(): label for label in q.NODE_LABELS}
+    builder = lance_csr.GraphConfig.builder()
+    for label in q.NODE_LABELS:
+        builder = builder.node_table(label, "id")
+    for rel_type, dataset_name in q.REL_DATASETS.items():
+        parts = dataset_name.split("_")
+        builder = builder.rel_table(rel_type, labels[parts[0]], labels[parts[-1]], "src", "dst")
+    return builder.build()
+
+
+q.build_config = build_config
 if MODE == "lazy":
     def load_datasets(root: Path) -> dict[str, lance.LanceDataset]:
         names = {label: label for label in q.NODE_LABELS} | q.REL_DATASETS
