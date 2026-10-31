@@ -31,8 +31,8 @@ RUNS=(
   "lance_graph lance-graph-0.5.4"
   "duckpgq duckpgq-1.5.6"
   "falkordb falkordb-6.0.2"
-  "lance_csr lance-csr-0.3.1-memory memory"
-  "lance_csr lance-csr-0.3.1-lazy lazy"
+  "lance_csr lance-csr-0.5.1-memory memory"
+  "lance_csr lance-csr-0.5.1-lazy lazy"
 )
 for run in "${RUNS[@]}"; do
   read -r dir name mode <<< "$run"

@@ -6,7 +6,7 @@ This directory has no queries or data of its own. `query.py` loads [`../lance_gr
 
 ## Setup
 
-lance-csr is embedded: it runs inside the Python process, with no server. This directory is its own uv project, because lance-csr 0.3.1 needs pylance 13 while the root project's lance-graph 0.5.4 uses pylance 1.0.4. Build the Lance datasets first (see [lance-graph](../lance_graph/README.md)), then install:
+lance-csr is embedded: it runs inside the Python process, with no server. This directory is its own uv project, because lance-csr 0.5.1 needs pylance 13 while the root project's lance-graph 0.5.4 uses pylance 1.0.4. Build the Lance datasets first (see [lance-graph](../lance_graph/README.md)), then install:
 
 ```sh
 uv sync --frozen
