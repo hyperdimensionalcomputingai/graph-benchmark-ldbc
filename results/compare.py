@@ -16,7 +16,7 @@ UNIT_TO_MS = {
 ROUND_MS_DECIMALS = 1
 SPEEDUP_DECIMALS = 1
 # Column order for tables and plots; unlisted engines go last, alphabetically.
-ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "duckpgq", "falkordb", "lance-csr"]
+ENGINE_ORDER = ["neo4j", "kuzu", "ladybug", "lance-graph", "lance-csr", "duckpgq", "falkordb"]
 
 
 def engine_sort_key(path: Path) -> tuple[int, str]:
@@ -157,7 +157,8 @@ def main() -> None:
         key=sort_query_key,
     )
 
-    headers = ["Query"] + [f"{system} (ms)" for system in systems]
+    # A space before the version lets narrow columns wrap instead of overflowing.
+    headers = ["Query"] + [re.sub(r"-(?=\d)", " ", system) + " (ms)" for system in systems]
     rows = []
     plot_queries: list[str] = []
     plot_values: list[list[float | None]] = []
