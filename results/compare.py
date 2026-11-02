@@ -157,7 +157,8 @@ def main() -> None:
         key=sort_query_key,
     )
 
-    headers = ["Query"] + [f"{system} (ms)" for system in systems]
+    # A space before the version lets narrow columns wrap instead of overflowing.
+    headers = ["Query"] + [re.sub(r"-(?=\d)", " ", system) + " (ms)" for system in systems]
     rows = []
     plot_queries: list[str] = []
     plot_values: list[list[float | None]] = []

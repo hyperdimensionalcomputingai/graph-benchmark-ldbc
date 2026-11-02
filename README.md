@@ -158,7 +158,7 @@ Every Neo4j, Kuzu, Ladybug, DuckPGQ and FalkorDB query has a 10-second timeout; 
 
 Times are in milliseconds. The ratio in parentheses is Neo4j mean / engine mean, so a value above 1 means the engine was faster than this Neo4j setup.
 
-| Query | neo4j-2026.09.0 (ms) | kuzu-0.11.3 (ms) | ladybug-0.22.1 (ms) | lance-graph-0.5.4 (ms) | duckpgq-1.5.6 (ms) | falkordb-6.0.2 (ms) | lance-csr-0.5.1-lazy (ms) | lance-csr-0.5.1-memory (ms) |
+| Query | neo4j 2026.09.0 (ms) | kuzu 0.11.3 (ms) | ladybug 0.22.1 (ms) | lance-graph 0.5.4 (ms) | duckpgq 1.5.6 (ms) | falkordb 6.0.2 (ms) | lance-csr 0.5.1-lazy (ms) | lance-csr 0.5.1-memory (ms) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | q1 | 1.277 | 1.734 (0.74x) | 0.627 (2.04x) | 1.297 (0.98x) | 0.978 (1.31x) | 0.440 (2.90x) | 1.200 (1.06x) | 0.730 (1.75x) |
 | q2 | 3.260 | 1.322 (2.47x) | 0.656 (4.97x) | 2.337 (1.39x) | 3.450 (0.94x) | 4.682 (0.70x) | 1.397 (2.33x) | 0.532 (6.13x) |
