@@ -27,7 +27,7 @@ FLAGS=(
 RUNS=(
   "neo4j neo4j-2026.09.0"
   "kuzu kuzu-0.11.3"
-  "ladybugdb ladybug-0.21.2"
+  "ladybugdb ladybug-0.22.1"
   "lance_graph lance-graph-0.5.4"
   "duckpgq duckpgq-1.5.6"
   "falkordb falkordb-6.0.2"
