@@ -64,4 +64,4 @@ uv run --frozen pytest benchmark_query.py \
   --benchmark-sort=fullname
 ```
 
-Latest CLI output: [Ladybug 0.22.1](../results/ladybug-0.22.1.txt). The [raw benchmark JSON](../results/ladybug-0.22.1.json) includes per-round timings. All 30 query assertions passed. Compared with [0.21.2](../results/archived/ladybug-0.21.2.txt), every query got faster: Q20 dropped from 14.2 ms to 0.64 ms, Q7, Q12, Q13 and Q22 are each about 4.5x faster, and Q30 fell from 97.8 ms to 43.6 ms.
+Latest CLI output: [Ladybug 0.22.1](../results/ladybug-0.22.1.txt). The [raw benchmark JSON](../results/ladybug-0.22.1.json) includes per-round timings. All 30 query assertions passed. Compared with [0.21.2](../results/archived/ladybug-0.21.2.txt), every query got faster: Q20 dropped from 14.2 ms to 0.63 ms, Q7, Q12, Q13 and Q22 are each about 4.5x faster, and Q30 fell from 97.8 ms to 43.1 ms.
