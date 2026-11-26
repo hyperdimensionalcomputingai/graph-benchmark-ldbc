@@ -4,11 +4,11 @@
 
 This section describes how benchmark the social network data in [Ladybug](https://github.com/LadybugDB/ladybug), a fork of Kuzu.
 
-Latest measurements (2026-11-02) are on an Apple M5 MacBook Pro with 24 GiB RAM. See the [comparison table](../README.md#mean-query-latency) and the [0.22.1 benchmark output](../results/ladybug-0.22.1.txt).
+Latest measurements (2026-11-26) are on an Apple M5 MacBook Pro with 24 GiB RAM. See the [comparison table](../README.md#mean-query-latency) and the [0.23.0 benchmark output](../results/ladybug-0.23.0.txt).
 
 ## Setup
 
-Because Ladybug is an embedded graph database, the database is tightly coupled with the application layer -- there is no server to set up and run. The project pins Ladybug to `0.22.1`; run `uv sync --frozen` from the repository root to install the benchmark dependencies.
+Because Ladybug is an embedded graph database, the database is tightly coupled with the application layer -- there is no server to set up and run. The project pins Ladybug to `0.23.0`; run `uv sync --frozen` from the repository root to install the benchmark dependencies.
 
 ## Build graph
 
@@ -64,4 +64,4 @@ uv run --frozen pytest benchmark_query.py \
   --benchmark-sort=fullname
 ```
 
-Latest CLI output: [Ladybug 0.22.1](../results/ladybug-0.22.1.txt). The [raw benchmark JSON](../results/ladybug-0.22.1.json) includes per-round timings. All 30 query assertions passed. Compared with [0.21.2](../results/archived/ladybug-0.21.2.txt), every query got faster: Q20 dropped from 14.2 ms to 0.63 ms, Q7, Q12, Q13 and Q22 are each about 4.5x faster, and Q30 fell from 97.8 ms to 43.1 ms.
+Latest CLI output: [Ladybug 0.23.0](../results/ladybug-0.23.0.txt). The [raw benchmark JSON](../results/ladybug-0.23.0.json) includes per-round timings. All 30 query assertions passed. Compared with [0.22.1](../results/archived/ladybug-0.22.1.txt), most queries are within run-to-run noise; Q7 is slower (5.6 ms to 6.5 ms), and Q30 is unchanged at 42.8 ms.
