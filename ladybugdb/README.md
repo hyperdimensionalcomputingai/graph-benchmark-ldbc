@@ -8,7 +8,7 @@ Latest measurements (2026-11-26) are on an Apple M5 MacBook Pro with 24 GiB RAM.
 
 ## Setup
 
-Because Ladybug is an embedded graph database, the database is tightly coupled with the application layer -- there is no server to set up and run. The project pins Ladybug to `0.23.0`; run `uv sync --frozen` from the repository root to install the benchmark dependencies. On macOS, Ladybug 0.23.0 loads OpenSSL 3 from Homebrew, so run `brew install openssl@3` first.
+Because Ladybug is an embedded graph database, the database is tightly coupled with the application layer -- there is no server to set up and run. The project pins Ladybug to `0.23.0`; run `uv sync --frozen` from the repository root to install the benchmark dependencies.
 
 ## Build graph
 
